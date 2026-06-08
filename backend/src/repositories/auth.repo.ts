@@ -1,0 +1,61 @@
+import { pool } from "../db/pool.js";
+import AppError from "../Error/app-error.js";
+import type { CreateUserInput } from "../types/user-types.js";
+
+export const createUser = async (createUser: CreateUserInput) => {
+  try {
+    const depId = await pool.query("SELECT id FROM departments WHERE id = $1", [
+      createUser.departmentId,
+    ]);
+    if (depId.rowCount === 0) {
+      throw AppError.NOT_FOUND;
+    }
+    const result = await pool.query(
+      "INSERT INTO employees (name,email,department_id,password, role) VALUES ($1,$2,$3,$4, $5) RETURNING id",
+      [
+        createUser.name,
+        createUser.email,
+        createUser.departmentId,
+        createUser.password,
+        createUser.role || "employee",
+      ],
+    );
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserById = async (id: number) => {
+  try {
+    const result = await pool.query(
+      "SELECT id, name, email, department_id, role FROM employees WHERE id = $1",
+      [id],
+    );
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserByEmail = async (email: string) => {
+  try {
+    const result = await pool.query(
+      "SELECT id, name, email, department_id, password, role FROM employees WHERE email = $1",
+      [email],
+    );
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+export const getAllUsers = async () => {
+  try {
+    const result = await pool.query(
+      "SELECT id, name, email, department_id, FROM employees WHERE role = 'employee'",
+    );
+    return result.rows;
+  } catch (error) {
+    throw error;
+  }
+};
