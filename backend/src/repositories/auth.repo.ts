@@ -11,7 +11,7 @@ export const createUser = async (createUser: CreateUserInput) => {
       throw AppError.NOT_FOUND;
     }
     const result = await pool.query(
-      "INSERT INTO employees (name,email,department_id,password, role) VALUES ($1,$2,$3,$4, $5) RETURNING id",
+      "INSERT INTO employees (name,email,department_id,password, role) VALUES ($1,$2,$3,$4, $5) RETURNING *",
       [
         createUser.name,
         createUser.email,
@@ -26,18 +26,6 @@ export const createUser = async (createUser: CreateUserInput) => {
   }
 };
 
-export const getUserById = async (id: number) => {
-  try {
-    const result = await pool.query(
-      "SELECT id, name, email, department_id, role FROM employees WHERE id = $1",
-      [id],
-    );
-    return result.rows[0];
-  } catch (error) {
-    throw error;
-  }
-};
-
 export const getUserByEmail = async (email: string) => {
   try {
     const result = await pool.query(
@@ -45,16 +33,6 @@ export const getUserByEmail = async (email: string) => {
       [email],
     );
     return result.rows[0];
-  } catch (error) {
-    throw error;
-  }
-};
-export const getAllUsers = async () => {
-  try {
-    const result = await pool.query(
-      "SELECT id, name, email, department_id, FROM employees WHERE role = 'employee'",
-    );
-    return result.rows;
   } catch (error) {
     throw error;
   }

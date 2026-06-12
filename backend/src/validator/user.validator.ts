@@ -11,3 +11,8 @@ export const LoginSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
 });
+export const updateSchema = Joi.object({
+  name: Joi.string().min(3).required(),
+  email: Joi.string().email().required(),
+  departmentId: Joi.number().required(),
+});

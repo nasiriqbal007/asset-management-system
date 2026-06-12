@@ -28,6 +28,16 @@ export const validateLogin = (schema: ObjectSchema) => {
   };
 };
 
+export const updateEmpValidate = (schema: ObjectSchema) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const { value, error } = schema.validate(req.body);
+    if (error) {
+      throw new Error(error.details[0]?.message);
+    }
+    req.body = value;
+    next();
+  };
+};
 export const authMiddleware = (
   req: Request & { user?: jwtPayload },
   res: Response,
@@ -44,9 +54,20 @@ export const authMiddleware = (
     req.user = decoded;
     next();
   } catch (err) {
-    if (err instanceof AppError) {
-      throw AppError.UNAUTHORIZED;
-    }
-    throw AppError.DATABASE_ERROR;
+    throw AppError.UNAUTHORIZED;
   }
+  AppError.INTERNAL_SERVER_ERROR;
+};
+export const requireRole = (role: string[]) => {
+  return (
+    req: Request & { user?: jwtPayload },
+    res: Response,
+    next: NextFunction,
+  ) => {
+    if (!req.user) return next(AppError.FORBIDDEN);
+    if (!role.includes(req.user.role)) {
+      return next(AppError.FORBIDDEN);
+    }
+    next();
+  };
 };

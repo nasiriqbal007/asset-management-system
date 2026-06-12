@@ -24,3 +24,8 @@ export type jwtPayload = {
   role: "employee" | "admin";
   email: string;
 };
+export type UpdateEmpType = {
+  name: string;
+  email: string;
+  departmentId: number;
+};

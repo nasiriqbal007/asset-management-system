@@ -23,6 +23,12 @@ class AppResponse {
     "Profile retrieved successfully",
     200,
   );
+  static GET_ALL_EMP = new AppResponse(
+    "Retrieved all employees successfully",
+    200,
+  );
+  static DELETED_ITEM = new AppResponse("Item deleted successfully", 200);
+  static DELETED_USER = new AppResponse("User deleted successfully", 200);
   static PROFILE_UPDATED = new AppResponse("Profile updated successfully", 200);
 }
 

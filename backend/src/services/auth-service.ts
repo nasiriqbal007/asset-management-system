@@ -1,13 +1,10 @@
 import { config } from "../config/env.js";
 import AppError from "../Error/app-error.js";
-import {
-  createUser,
-  getUserByEmail,
-  getUserById,
-} from "../repositories/auth.repo.js";
+import { createUser, getUserByEmail } from "../repositories/auth.repo.js";
 import type { CreateUserInput, LoginInput } from "../types/user-types.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { getEmployeeById } from "../repositories/employee.repo.js";
 
 export const registerUser = async (userData: CreateUserInput) => {
   const existingUser = await getUserByEmail(userData.email);
@@ -48,9 +45,9 @@ export const authenticate = async (data: LoginInput) => {
   return { user, token };
 };
 export const getUserProfile = async (id: number) => {
-  const user = await getUserById(id);
+  const user = await getEmployeeById(id);
   if (!user) {
-    throw AppError.USER_NOT_FOUND
+    throw AppError.USER_NOT_FOUND;
   }
   return user;
 };
