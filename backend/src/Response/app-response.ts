@@ -27,6 +27,13 @@ class AppResponse {
     "Retrieved all employees successfully",
     200,
   );
+  static GET_ALL_Assets = new AppResponse(
+    "Retrieved all assets successfully",
+    200,
+  );
+  static ITEM_CREATED = new AppResponse("Item created successfully", 201);
+  static Item_BY_ID = new AppResponse("Retrieved one item successfully", 200);
+  static UPDATED_ITEM = new AppResponse("Item updated successfully", 200);
   static DELETED_ITEM = new AppResponse("Item deleted successfully", 200);
   static DELETED_USER = new AppResponse("User deleted successfully", 200);
   static PROFILE_UPDATED = new AppResponse("Profile updated successfully", 200);

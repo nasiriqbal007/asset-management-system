@@ -17,6 +17,7 @@ class AppError extends Error {
     "Invalid email or password",
     401,
   );
+
   static UNAUTHORIZED = new AppError("Unauthorized access", 401);
   static ADMIN_ONLY = new AppError("Admin access required", 403);
   static FORBIDDEN = new AppError("Forbidden", 403);
@@ -25,6 +26,7 @@ class AppError extends Error {
     "Asset already exists",
     400,
   );
+   
   static VALIDATION_ERROR = new AppError("Validation failed", 400);
   static INVALID_TOKEN = new AppError("Invalid token", 401);
   static DATABASE_ERROR = new AppError("Database error occurred", 500);
