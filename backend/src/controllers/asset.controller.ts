@@ -6,7 +6,9 @@ import {
   getAssetById,
   updatedAsset,
 } from "../services/asset-service.js";
+import fs from "fs";
 import AppResponse from "../Response/app-response.js";
+import AppError from "../Error/app-error.js";
 
 export const getAllAssetsController = async (
   req: Request,
@@ -40,9 +42,17 @@ export const createAssetController = async (
   next: NextFunction,
 ) => {
   try {
-    const newAsset = await AddAsset(req.body);
+    if (!req.file) {
+      throw AppError.BAD_REQUEST;
+    }
+    const newAsset = await AddAsset({ ...req.body, image_url: req.file?.path });
     AppResponse.ITEM_CREATED.send(res, newAsset);
   } catch (error) {
+    fs.unlink(req.file?.path || "", (err) => {
+      if (err) {
+        console.error("Error deleting file:", err);
+      }
+    });
     next(error);
   }
 };
@@ -52,10 +62,21 @@ export const updateAssetController = async (
   next: NextFunction,
 ) => {
   try {
+    if (!req.file) {
+      throw AppError.BAD_REQUEST;
+    }
     const assetId = Number(req.params.id);
-    const asset = await updatedAsset(assetId, req.body);
+    const asset = await updatedAsset(assetId, {
+      ...req.body,
+      image_url: req.file?.path,
+    });
     AppResponse.UPDATED_ITEM.send(res, asset);
   } catch (error) {
+    fs.unlink(req.file?.path || "", (err) => {
+      if (err) {
+        console.error("Error deleting file:", err);
+      }
+    });
     next(error);
   }
 };

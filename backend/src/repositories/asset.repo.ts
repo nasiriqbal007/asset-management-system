@@ -17,7 +17,7 @@ export const createAsset = async (data: CreateAssetInput) => {
   try {
     const newAsset = await pool.query(
       `INSERT INTO assets 
-      (name, image_url, category_id, serial_number, purchase_date, status)
+      (asset_name, image_url, category_id, serial_number, purchase_date, status)
       VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *`,
       [
@@ -65,7 +65,7 @@ export const updateAsset = async (assetId: number, data: UpdateAsset) => {
     const updatedAsset = await pool.query(
       `UPDATE assets 
        SET 
-       name=$1,
+       asset_name=$1,
        image_url=$2,
        category_id=$3,
        serial_number=$4,

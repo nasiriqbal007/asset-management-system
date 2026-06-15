@@ -12,6 +12,7 @@ import {
   CreateAssetSchema,
   UpdateAssetSchema,
 } from "../validator/asset.validator.js";
+import { upload } from "../middleware/multer-middleware.js";
 
 export const assetRoute = Router();
 assetRoute.get(
@@ -30,6 +31,7 @@ assetRoute.post(
   "/",
   authMiddleware,
   requireRole(["admin"]),
+  upload.single("image_url"),
   validateAsset(CreateAssetSchema),
   createAssetController,
 );
@@ -38,6 +40,7 @@ assetRoute.patch(
   "/:id",
   authMiddleware,
   requireRole(["admin"]),
+  upload.single("image_url"),
   validateAsset(UpdateAssetSchema),
   updateAssetController,
 );
