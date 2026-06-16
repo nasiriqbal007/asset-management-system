@@ -31,15 +31,7 @@ export const authenticate = async (data: LoginInput) => {
   if (!isMatch) {
     throw AppError.INVALID_CREDENTIALS;
   }
-  const accessToken = jwt.sign(
-    {
-      userId: user.id,
-      email: user.email,
-      role: user.role,
-    },
-    config.jwtSecret,
-    { expiresIn: "1" },
-  );
+
   const token = jwt.sign(
     {
       userId: user.id,

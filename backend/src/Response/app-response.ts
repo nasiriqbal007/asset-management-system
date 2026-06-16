@@ -31,6 +31,7 @@ class AppResponse {
     "Retrieved all assets successfully",
     200,
   );
+  static GET_ALL_REQ = new AppResponse("Retrieved all data successfully", 200);
   static ITEM_CREATED = new AppResponse("Item created successfully", 201);
   static Item_BY_ID = new AppResponse("Retrieved one item successfully", 200);
   static UPDATED_ITEM = new AppResponse("Item updated successfully", 200);

@@ -43,7 +43,7 @@ export const createAssetController = async (
 ) => {
   try {
     if (!req.file) {
-      throw AppError.BAD_REQUEST;
+      throw AppError.IMAGE_REQ;
     }
     const newAsset = await AddAsset({ ...req.body, image_url: req.file?.path });
     AppResponse.ITEM_CREATED.send(res, newAsset);
@@ -63,7 +63,7 @@ export const updateAssetController = async (
 ) => {
   try {
     if (!req.file) {
-      throw AppError.BAD_REQUEST;
+      throw AppError.IMAGE_REQ;
     }
     const assetId = Number(req.params.id);
     const asset = await updatedAsset(assetId, {

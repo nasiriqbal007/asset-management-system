@@ -6,6 +6,7 @@ import { authRouter } from "./routes/auth-routes.js";
 import AppError from "./Error/app-error.js";
 import { empRouter } from "./routes/emp-routes.js";
 import { assetRoute } from "./routes/assets-routes.js";
+import { assetReqRouter } from "./routes/asset-req-route.js";
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -15,6 +16,8 @@ app.use("/api/auth", authRouter);
 
 app.use("/api/employees", empRouter);
 app.use("/api/assets", assetRoute);
+app.use("/api/requests", assetReqRouter);
+
 //errorMiddleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   const statusCode = err instanceof AppError ? err.statusCode : 500;
