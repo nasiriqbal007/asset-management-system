@@ -14,9 +14,9 @@ export const createAllocationService = async (
 ): Promise<AssetAllocation | null> => {
   const newAllocation = await createAllocation(data);
   if (!newAllocation) {
-    AppError.VALIDATION_ERROR;
+    throw AppError.VALIDATION_ERROR;
   }
-  return newAllocation || null;
+  return newAllocation;
 };
 
 export const returnAssetService = async (
@@ -24,7 +24,7 @@ export const returnAssetService = async (
 ): Promise<AssetAllocation | null> => {
   const updatedAllocation = await assetReturnDate(id);
   if (!updatedAllocation) {
-    AppError.NOT_FOUND;
+    throw AppError.NOT_FOUND;
   }
   return updatedAllocation;
 };

@@ -4,7 +4,8 @@ import {
   getAllAssetReqService,
   getAssetReqByIdService,
   getAssetReqByStatusService,
-  updateAssetReqService,
+  approveRequestService,
+  rejectRequestService,
 } from "../services/asset-req-service.js";
 import AppResponse from "../Response/app-response.js";
 import type { ReqStatus } from "../types/asset-req-type.js";
@@ -39,7 +40,6 @@ export const getReqByStatusController = async (
 
     AppResponse.GET_ALL_Assets.send(res, reqStatus);
   } catch (error) {
-    console.error("Error fetching requests by status:", error);
     next(error);
   }
 };
@@ -59,7 +59,7 @@ export const getReqByIdController = async (
   }
 };
 
-export const updateReqController = async (
+export const ApproveReqController = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -67,7 +67,7 @@ export const updateReqController = async (
   try {
     const reqId = Number(req.params.id);
     const updateData = req.body;
-    const updatedReq = await updateAssetReqService(reqId, updateData);
+    const updatedReq = await approveRequestService(reqId, updateData);
     AppResponse.UPDATED_ITEM.send(res, updatedReq);
   } catch (error) {
     next(error);
@@ -81,6 +81,41 @@ export const createReqController = async (
   try {
     const newReq = await createAssetReqService(req.body);
     AppResponse.ITEM_CREATED.send(res, newReq);
+  } catch (error) {
+    next(error);
+  }
+};
+export const rejectReqController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const reqId = Number(req.params.id);
+    const rejected = await rejectRequestService(reqId);
+    AppResponse.UPDATED_ITEM.send(res, rejected);
+    if (!reqId) {
+      throw AppError.NOT_FOUND;
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+export const approveReqController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const reqId = Number(req.params.id);
+    const allocationData = req.body;
+
+    if (!reqId) {
+      throw AppError.NOT_FOUND;
+    }
+
+    const allocation = await approveRequestService(reqId, allocationData);
+    AppResponse.ITEM_CREATED.send(res, allocation);
   } catch (error) {
     next(error);
   }

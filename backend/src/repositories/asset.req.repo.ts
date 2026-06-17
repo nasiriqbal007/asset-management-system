@@ -1,3 +1,4 @@
+import type { PoolClient } from "pg";
 import { pool } from "../db/pool.js";
 import type {
   AssetRequest,
@@ -60,11 +61,12 @@ export const getRequestsByStatus = async (
 };
 
 export const updateAssetReq = async (
+  client: PoolClient,
   reqId: number,
   data: UpdateAssetRequestInput,
 ): Promise<AssetRequest | undefined> => {
   try {
-    const req = await pool.query(
+    const req = await client.query(
       `UPDATE asset_requests 
      SET status = $1
      WHERE id = $2

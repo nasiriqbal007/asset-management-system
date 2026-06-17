@@ -27,6 +27,7 @@ class AppError extends Error {
     "Unable to process request. Please check your data and try again.",
     400,
   );
+  static ALREADY_IN_USE = new AppError("Asset is already in use.", 400);
   static VALIDATION_ERROR = new AppError("Validation failed", 400);
   static INVALID_TOKEN = new AppError("Invalid token", 401);
   static DATABASE_ERROR = new AppError("Database error occurred", 500);

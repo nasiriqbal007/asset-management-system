@@ -2,9 +2,10 @@ import { Router } from "express";
 import {
   getAllReqController,
   getReqByStatusController,
-  updateReqController,
   getReqByIdController,
   createReqController,
+  approveReqController,
+  rejectReqController,
 } from "../controllers/asset.req.controller.js";
 import { authMiddleware, requireRole } from "../middleware/auth-middleware.js";
 import { validateAssetReqData } from "../middleware/asset-req-middleware.js";
@@ -31,11 +32,16 @@ assetReqRouter.get(
 );
 
 assetReqRouter.patch(
-  "/:id",
+  "/:id/approve",
   authMiddleware,
   requireRole(["admin"]),
-  validateAssetReqData(createAssetReqSchema),
-  updateReqController,
+  approveReqController,
+);
+assetReqRouter.patch(
+  "/:id/reject",
+  authMiddleware,
+  requireRole(["admin"]),
+  rejectReqController,
 );
 assetReqRouter.post(
   "/",

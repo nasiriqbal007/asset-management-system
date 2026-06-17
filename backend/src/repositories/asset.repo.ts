@@ -1,5 +1,11 @@
+import { string } from "joi";
 import { pool } from "../db/pool.js";
-import type { CreateAssetInput, UpdateAsset } from "../types/asset-type.js";
+import type {
+  Asset,
+  AssetQuery,
+  CreateAssetInput,
+  UpdateAsset,
+} from "../types/asset-type.js";
 
 export const checkSerialNumberExists = async (serialNumber: string) => {
   try {
@@ -98,6 +104,50 @@ export const deleteAsset = async (assetId: number) => {
     );
 
     return deletedAsset.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const searchByAssetName = async (name: string): Promise<Asset> => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM assets WHERE asset_name=$1",
+
+      [name],
+    );
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const searchByAssetSerialNumber = async (
+  serialNumber: string,
+): Promise<Asset> => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM assets WHERE serial_number=$1",
+
+      [serialNumber],
+    );
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const searchByAssetCategory = async (
+  categoryId: number,
+  assetQuery: AssetQuery,
+): Promise<Asset> => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM assets WHERE category_id=$1 AND status=$2",
+
+      [categoryId, assetQuery.status],
+    );
+    return result.rows[0];
   } catch (error) {
     throw error;
   }

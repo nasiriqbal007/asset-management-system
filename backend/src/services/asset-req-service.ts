@@ -1,3 +1,4 @@
+import { pool } from "../db/pool.js";
 import AppError from "../Error/app-error.js";
 import {
   checkDuplicatePendingRequest,
@@ -8,12 +9,19 @@ import {
   updateAssetReq,
 } from "../repositories/asset.req.repo.js";
 import type {
+  AssetAllocation,
+  createAllocationInput,
+} from "../types/allocation.js";
+import type {
   AssetRequest,
   CreateAssetRequestInput,
   ReqStatus,
   UpdateAssetRequestInput,
 } from "../types/asset-req-type.js";
 import { getAssetById } from "./asset-service.js";
+import { createAllocationService } from "./allocation-service.js";
+import { assetById } from "../repositories/asset.repo.js";
+import { checkAvailability } from "../repositories/asset.allocation.repo.js";
 
 export const createAssetReqService = async (
   data: CreateAssetRequestInput,
@@ -22,10 +30,16 @@ export const createAssetReqService = async (
   if (!asset) {
     throw AppError.ASSET_NOT_FOUND;
   }
+  const isAvailable = await checkAvailability(data.asset_id);
+  console.log("......is available  " + isAvailable);
+  if (!isAvailable) {
+    throw AppError.ALREADY_IN_USE;
+  }
   const hasDuplicate = await checkDuplicatePendingRequest(
     data.employee_id,
     data.asset_id,
   );
+
   if (hasDuplicate) {
     throw AppError.DUPLICATE_REQ_FOUND;
   }
@@ -54,9 +68,7 @@ export const getAllAssetReqService = async (): Promise<AssetRequest[]> => {
 export const getAssetReqByStatusService = async (
   status: ReqStatus,
 ): Promise<AssetRequest[]> => {
-
   const reqStatus = await getRequestsByStatus(status);
-  
 
   if (reqStatus.length === 0 || !reqStatus) {
     throw AppError.NOT_FOUND;
@@ -64,13 +76,58 @@ export const getAssetReqByStatusService = async (
   return reqStatus;
 };
 
-export const updateAssetReqService = async (
-  reqId: number,
-  data: UpdateAssetRequestInput,
-): Promise<AssetRequest | undefined> => {
-  if (!reqId) {
-    AppError.NOT_FOUND;
+export const rejectRequestService = async (reqId: number) => {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+    const req = await assetById(reqId);
+    if (!req) {
+      throw AppError.NOT_FOUND;
+    }
+    if (req.status !== "pending") {
+      throw AppError.VALIDATION_ERROR;
+    }
+    const updateReq = await updateAssetReq(client, reqId, {
+      status: "rejected",
+    });
+    if (!updateReq) {
+      throw AppError.VALIDATION_ERROR;
+    }
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
   }
-  const updateReq = await updateAssetReq(reqId, data);
-  return updateReq;
+};
+export const approveRequestService = async (
+  reqId: number,
+  data: createAllocationInput,
+): Promise<AssetAllocation> => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    const updatedReq = await updateAssetReq(client, reqId, {
+      status: "approved",
+    });
+    if (!updatedReq) {
+      throw AppError.NOT_FOUND;
+    }
+
+    const allocation = await createAllocationService(data);
+    if (!allocation) {
+      throw AppError.VALIDATION_ERROR;
+    }
+
+    await client.query("COMMIT");
+    return allocation;
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
 };

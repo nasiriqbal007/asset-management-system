@@ -28,3 +28,10 @@ export type UpdateAsset = Partial<{
   purchase_date: string;
   status: AssetStatus;
 }>;
+
+export type AssetQuery = {
+  asset_name?: string;
+  serial_number?: string;
+  category_id?: number;
+  status: AssetStatus;
+};

@@ -25,7 +25,7 @@ export const assetReturnDate = async (
 ): Promise<AssetAllocation | null> => {
   try {
     const update = await pool.query(
-      "UPDATE asset_allocations SET return_date = NOW() WHERE id = $1 RETURNING *",
+      "UPDATE asset_allocations SET returned_date = NOW() WHERE id = $1 RETURNING *",
       [id],
     );
     return update.rows[0] || null;
@@ -40,6 +40,18 @@ export const getAllAllocations = async (): Promise<AssetAllocation[]> => {
       "SELECT * FROM asset_allocations ORDER BY allocated_date DESC",
     );
     return allocations.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const checkAvailability = async (assetId: number): Promise<boolean> => {
+  try {
+    const isAvailable = await pool.query(
+      "SELECT 1 FROM asset_allocations WHERE asset_id=$1 AND returned_date is NOT NULL",
+      [assetId],
+    );
+    return (isAvailable.rowCount ?? 0) > 0;
   } catch (error) {
     throw error;
   }
