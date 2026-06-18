@@ -9,6 +9,7 @@ import {
 import fs from "fs";
 import AppResponse from "../Response/app-response.js";
 import AppError from "../Error/app-error.js";
+import type { AssetQuery } from "../types/asset-type.js";
 
 export const getAllAssetsController = async (
   req: Request,
@@ -16,8 +17,24 @@ export const getAllAssetsController = async (
   next: NextFunction,
 ) => {
   try {
-    const assets = await getAllAsset();
-    AppResponse.GET_ALL_Assets.send(res, assets);
+    const page = req.query.page ? Number(req.query.page) : undefined;
+    const limit = req.query.limit ? Number(req.query.limit) : undefined;
+    const categoryId = req.query.category_id
+      ? Number(req.query.category_id)
+      : undefined;
+    const assetQuery: AssetQuery = {
+      asset_name: req.query.asset_name?.toString().trim(),
+      serial_number: req.query.serial_number?.toString().trim(),
+      status: req.query.status?.toString().trim(),
+      category_id: categoryId,
+      page: page,
+      limit: limit,
+    } as AssetQuery;
+
+    const assets = await getAllAsset(assetQuery);
+    AppResponse.GET_ALL_Assets.send(res, {
+      assets,
+    });
   } catch (error) {
     next(error);
   }

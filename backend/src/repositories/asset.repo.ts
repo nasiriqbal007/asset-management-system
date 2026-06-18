@@ -1,4 +1,3 @@
-import { string } from "joi";
 import { pool } from "../db/pool.js";
 import type {
   Asset,
@@ -42,11 +41,45 @@ export const createAsset = async (data: CreateAssetInput) => {
   }
 };
 
-export const getAssets = async () => {
+export const getAssets = async (query: AssetQuery): Promise<Asset[]> => {
   try {
-    const assets = await pool.query(
-      "SELECT * FROM assets ORDER BY created_at DESC",
-    );
+    const conditions: string[] = [];
+    const values: unknown[] = [];
+    let i = 1;
+    if (query.asset_name) {
+      conditions.push(`asset_name ILIKE $${i++}`);
+      values.push(`%${query.asset_name}%`);
+    }
+    if (query.serial_number) {
+      conditions.push(`serial_number=$${i++}`);
+      values.push(query.serial_number);
+    }
+    if (query.category_id !== undefined) {
+      conditions.push(`category_id=$${i++}`);
+      values.push(query.category_id);
+    }
+    if (query.status) {
+      conditions.push(`status=$${i++}`);
+      values.push(query.status);
+    }
+
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
+    const offset = (page - 1) * limit;
+    const whereCondition =
+      conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+    const result = `SELECT a.*, c.category_name FROM assets a 
+    LEFT JOIN categories c ON a.category_id=c.id
+    ${whereCondition} ORDER BY a.created_at DESC
+    LIMIT $${i++} OFFSET $${i++}
+    `;
+    console.log(values);
+    values.push(limit, offset);
+    console.log(values);
+    console.log(conditions);
+
+    const assets = await pool.query(result, values);
 
     return assets.rows;
   } catch (error) {
@@ -104,50 +137,6 @@ export const deleteAsset = async (assetId: number) => {
     );
 
     return deletedAsset.rows[0];
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const searchByAssetName = async (name: string): Promise<Asset> => {
-  try {
-    const result = await pool.query(
-      "SELECT * FROM assets WHERE asset_name=$1",
-
-      [name],
-    );
-    return result.rows[0];
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const searchByAssetSerialNumber = async (
-  serialNumber: string,
-): Promise<Asset> => {
-  try {
-    const result = await pool.query(
-      "SELECT * FROM assets WHERE serial_number=$1",
-
-      [serialNumber],
-    );
-    return result.rows[0];
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const searchByAssetCategory = async (
-  categoryId: number,
-  assetQuery: AssetQuery,
-): Promise<Asset> => {
-  try {
-    const result = await pool.query(
-      "SELECT * FROM assets WHERE category_id=$1 AND status=$2",
-
-      [categoryId, assetQuery.status],
-    );
-    return result.rows[0];
   } catch (error) {
     throw error;
   }
