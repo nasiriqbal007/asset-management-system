@@ -5,6 +5,8 @@ import type {
   CreateAssetInput,
   UpdateAsset,
 } from "../types/asset-type.js";
+import type { PaginatedResult } from "../types/pagination.js";
+import { runTransactionWithLog } from "../utils/audit.helper.js";
 
 export const checkSerialNumberExists = async (serialNumber: string) => {
   try {
@@ -18,30 +20,37 @@ export const checkSerialNumberExists = async (serialNumber: string) => {
   }
 };
 
-export const createAsset = async (data: CreateAssetInput) => {
-  try {
-    const newAsset = await pool.query(
-      `INSERT INTO assets 
+export const createAsset = async (userId: number, data: CreateAssetInput) => {
+  return await runTransactionWithLog(
+    {
+      user_id: userId,
+      action: "Create",
+      entity_type: "Asset",
+    },
+    async (client) => {
+      const newAsset = await client.query(
+        `INSERT INTO assets 
       (asset_name, image_url, category_id, serial_number, purchase_date, status)
       VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *`,
-      [
-        data.asset_name,
-        data.image_url,
-        data.category_id,
-        data.serial_number,
-        data.purchase_date,
-        data.status,
-      ],
-    );
+        [
+          data.asset_name,
+          data.image_url,
+          data.category_id,
+          data.serial_number,
+          data.purchase_date,
+          data.status,
+        ],
+      );
 
-    return newAsset.rows[0];
-  } catch (error) {
-    throw error;
-  }
+      return newAsset.rows[0];
+    },
+  );
 };
 
-export const getAssets = async (query: AssetQuery): Promise<Asset[]> => {
+export const getAssets = async (
+  query: AssetQuery,
+): Promise<PaginatedResult<Asset>> => {
   try {
     const conditions: string[] = [];
     const values: unknown[] = [];
@@ -69,19 +78,31 @@ export const getAssets = async (query: AssetQuery): Promise<Asset[]> => {
     const whereCondition =
       conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
-    const result = `SELECT a.*, c.category_name FROM assets a 
+    const result = `SELECT a.*, c.category_name,
+     COUNT(*) OVER() as total
+    FROM assets a 
     LEFT JOIN categories c ON a.category_id=c.id
     ${whereCondition} ORDER BY a.created_at DESC
     LIMIT $${i++} OFFSET $${i++}
     `;
-    console.log(values);
+
     values.push(limit, offset);
-    console.log(values);
-    console.log(conditions);
 
     const assets = await pool.query(result, values);
-
-    return assets.rows;
+    const total = assets.rows.length > 0 ? Number(assets.rows[0].total) : 0;
+    const totalPages = Math.ceil(total / limit);
+    const data = assets.rows.map(
+      ({ total, ...assetData }) => assetData as Asset,
+    );
+    return {
+      data,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages,
+      },
+    };
   } catch (error) {
     throw error;
   }
@@ -99,10 +120,20 @@ export const assetById = async (assetId: number) => {
   }
 };
 
-export const updateAsset = async (assetId: number, data: UpdateAsset) => {
-  try {
-    const updatedAsset = await pool.query(
-      `UPDATE assets 
+export const updateAsset = async (
+  assetId: number,
+  userId: number,
+  data: UpdateAsset,
+) => {
+  return await runTransactionWithLog(
+    {
+      user_id: userId,
+      action: "update",
+      entity_type: "Asset",
+    },
+    async (client) => {
+      const updatedAsset = await client.query(
+        `UPDATE assets 
        SET 
        asset_name=$1,
        image_url=$2,
@@ -112,32 +143,35 @@ export const updateAsset = async (assetId: number, data: UpdateAsset) => {
        status=$6
        WHERE id=$7
        RETURNING *`,
-      [
-        data.asset_name,
-        data.image_url,
-        data.category_id,
-        data.serial_number,
-        data.purchase_date,
-        data.status,
-        assetId,
-      ],
-    );
+        [
+          data.asset_name,
+          data.image_url,
+          data.category_id,
+          data.serial_number,
+          data.purchase_date,
+          data.status,
+          assetId,
+        ],
+      );
 
-    return updatedAsset.rows[0];
-  } catch (error) {
-    throw error;
-  }
+      return updatedAsset.rows[0];
+    },
+  );
 };
 
-export const deleteAsset = async (assetId: number) => {
-  try {
-    const deletedAsset = await pool.query(
-      "DELETE FROM assets WHERE id=$1 RETURNING *",
-      [assetId],
-    );
-
-    return deletedAsset.rows[0];
-  } catch (error) {
-    throw error;
-  }
+export const deleteAsset = async (assetId: number, userId: number) => {
+  return await runTransactionWithLog(
+    {
+      user_id: userId,
+      action: "update",
+      entity_type: "Asset",
+    },
+    async (client) => {
+      const deletedAsset = await client.query(
+        "DELETE FROM assets WHERE id=$1 RETURNING *",
+        [assetId],
+      );
+      return deletedAsset.rows[0];
+    },
+  );
 };

@@ -10,10 +10,11 @@ class AppResponse {
   }
 
   send(res: any, data?: any) {
+    const payload = data || this.data;
     return res.status(this.statusCode).json({
       success: true,
       message: this.message,
-      data: data || this.data,
+      ...payload,
     });
   }
 

@@ -3,6 +3,7 @@ export type User = {
   name: string;
   email: string;
   department: string;
+  department_id: number;
   role: "employee" | "admin";
 };
 
@@ -28,4 +29,11 @@ export type UpdateEmpType = {
   name: string;
   email: string;
   departmentId: number;
+};
+
+export type QueryUser = {
+  name?: string;
+  department_id?: number;
+  page?: number;
+  limit?: number;
 };

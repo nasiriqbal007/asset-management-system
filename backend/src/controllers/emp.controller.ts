@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import AppError from "../Error/app-error.js";
+
 import AppResponse from "../Response/app-response.js";
 import {
   deleteEmp,
@@ -8,6 +8,7 @@ import {
   updateEmp,
 } from "../services/employee-service.js";
 import { createUser } from "../repositories/auth.repo.js";
+import type { QueryUser } from "../types/user-types.js";
 
 export const getAllEmpController = async (
   req: Request,
@@ -15,7 +16,18 @@ export const getAllEmpController = async (
   next: NextFunction,
 ) => {
   try {
-    const allEmp = await getAllEmp();
+    const page = req.query.page ? Number(req.query.page) : undefined;
+    const limit = req.query.limit ? Number(req.query.limit) : undefined;
+    const departmentId = req.query.department_id
+      ? Number(req.query.department_id)
+      : undefined;
+    const searchEmp: QueryUser = {
+      name: req.query.body?.toString().trim(),
+      department_id: departmentId,
+      page: page,
+      limit: limit,
+    } as QueryUser;
+    const allEmp = await getAllEmp(searchEmp);
     AppResponse.GET_ALL_EMP.send(res, allEmp);
   } catch (error) {
     next(error);

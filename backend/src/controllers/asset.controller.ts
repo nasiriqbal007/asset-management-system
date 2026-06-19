@@ -62,7 +62,11 @@ export const createAssetController = async (
     if (!req.file) {
       throw AppError.IMAGE_REQ;
     }
-    const newAsset = await AddAsset({ ...req.body, image_url: req.file?.path });
+    const userId = Number(req.params.userId);
+    const newAsset = await AddAsset(userId, {
+      ...req.body,
+      image_url: req.file?.path,
+    });
     AppResponse.ITEM_CREATED.send(res, newAsset);
   } catch (error) {
     fs.unlink(req.file?.path || "", (err) => {
@@ -79,11 +83,9 @@ export const updateAssetController = async (
   next: NextFunction,
 ) => {
   try {
-    if (!req.file) {
-      throw AppError.IMAGE_REQ;
-    }
+    const userId = Number(req.params.userId);
     const assetId = Number(req.params.id);
-    const asset = await updatedAsset(assetId, {
+    const asset = await updatedAsset(assetId, userId, {
       ...req.body,
       image_url: req.file?.path,
     });
@@ -105,7 +107,9 @@ export const deleteAssetController = async (
 ) => {
   try {
     const assetId = Number(req.params.id);
-    const deleteAsset = await deleteAssetId(assetId);
+    const userId = Number(req.params.userId);
+
+    const deleteAsset = await deleteAssetId(assetId, userId);
     AppResponse.DELETED_ITEM.send(res, deleteAsset);
   } catch (error) {
     next(error);

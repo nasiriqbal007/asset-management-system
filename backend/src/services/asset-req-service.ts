@@ -76,7 +76,7 @@ export const getAssetReqByStatusService = async (
   return reqStatus;
 };
 
-export const rejectRequestService = async (reqId: number) => {
+export const rejectRequestService = async (reqId: number, userId: number) => {
   const client = await pool.connect();
 
   try {
@@ -94,6 +94,10 @@ export const rejectRequestService = async (reqId: number) => {
     if (!updateReq) {
       throw AppError.VALIDATION_ERROR;
     }
+    await client.query(
+      "INSERT INTO audit_logs (user_id,action,entity_type) VALUES($1,$2,$3)",
+      [userId, "rejected", "Asset Request"],
+    );
     await client.query("COMMIT");
   } catch (error) {
     await client.query("ROLLBACK");
@@ -104,6 +108,7 @@ export const rejectRequestService = async (reqId: number) => {
 };
 export const approveRequestService = async (
   reqId: number,
+  userId: number,
   data: createAllocationInput,
 ): Promise<AssetAllocation> => {
   const client = await pool.connect();
@@ -121,7 +126,10 @@ export const approveRequestService = async (
     if (!allocation) {
       throw AppError.VALIDATION_ERROR;
     }
-
+    await client.query(
+      "INSERT INTO audit_logs (user_id,action,entity_type) VALUES($1,$2,$3)",
+      [userId, "Approved", "Asset Request"],
+    );
     await client.query("COMMIT");
     return allocation;
   } catch (error) {

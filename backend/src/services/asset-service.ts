@@ -13,17 +13,21 @@ import type {
   UpdateAsset,
 } from "../types/asset-type.js";
 
-export const AddAsset = async (data: CreateAssetInput) => {
+export const AddAsset = async (userId: number, data: CreateAssetInput) => {
   const serialExists = await checkSerialNumberExists(data.serial_number);
   if (serialExists) {
     throw AppError.ASSET_ALREADY_EXISTS;
   }
-  const newAsset = await createAsset(data);
+  const newAsset = await createAsset(userId, data);
 
   return newAsset;
 };
-export const updatedAsset = async (assetId: number, data: UpdateAsset) => {
-  const newAsset = await updateAsset(assetId, data);
+export const updatedAsset = async (
+  assetId: number,
+  userId: number,
+  data: UpdateAsset,
+) => {
+  const newAsset = await updateAsset(assetId, userId, data);
   if (!newAsset) {
     throw AppError.ASSET_NOT_FOUND;
   }
@@ -33,7 +37,7 @@ export const updatedAsset = async (assetId: number, data: UpdateAsset) => {
 export const getAllAsset = async (assetQuery: AssetQuery) => {
   const assets = await getAssets(assetQuery);
 
-  if (assets.length === 0 || !assets) {
+  if (assets.data.length === 0 || !assets) {
     throw AppError.NOT_FOUND;
   }
 
@@ -46,8 +50,8 @@ export const getAssetById = async (assetId: number) => {
   }
   return asset;
 };
-export const deleteAssetId = async (assetId: number) => {
-  const asset = await deleteAsset(assetId);
+export const deleteAssetId = async (assetId: number, userId: number) => {
+  const asset = await deleteAsset(assetId, userId);
   if (!asset) {
     throw AppError.ASSET_NOT_FOUND;
   }

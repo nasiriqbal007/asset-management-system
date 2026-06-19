@@ -5,11 +5,11 @@ import {
   getEmployeeById,
   updateEmployee,
 } from "../repositories/employee.repo.js";
-import type { UpdateEmpType } from "../types/user-types.js";
+import type { QueryUser, UpdateEmpType } from "../types/user-types.js";
 
-export const getAllEmp = async () => {
-  const employees = await getAllEmployees();
-  if (employees.length === 0) {
+export const getAllEmp = async (query: QueryUser) => {
+  const employees = await getAllEmployees(query);
+  if (employees.length === 0 || !employees) {
     AppError.NOT_FOUND;
   }
   return employees;

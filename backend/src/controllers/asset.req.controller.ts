@@ -66,8 +66,9 @@ export const ApproveReqController = async (
 ) => {
   try {
     const reqId = Number(req.params.id);
+    const userId = Number(req.params.userId);
     const updateData = req.body;
-    const updatedReq = await approveRequestService(reqId, updateData);
+    const updatedReq = await approveRequestService(reqId, userId, updateData);
     AppResponse.UPDATED_ITEM.send(res, updatedReq);
   } catch (error) {
     next(error);
@@ -92,7 +93,8 @@ export const rejectReqController = async (
 ) => {
   try {
     const reqId = Number(req.params.id);
-    const rejected = await rejectRequestService(reqId);
+    const userId = Number(req.params.userId);
+    const rejected = await rejectRequestService(reqId, userId);
     AppResponse.UPDATED_ITEM.send(res, rejected);
     if (!reqId) {
       throw AppError.NOT_FOUND;
@@ -108,13 +110,18 @@ export const approveReqController = async (
 ) => {
   try {
     const reqId = Number(req.params.id);
+    const userId = Number(req.params.userId);
     const allocationData = req.body;
 
     if (!reqId) {
       throw AppError.NOT_FOUND;
     }
 
-    const allocation = await approveRequestService(reqId, allocationData);
+    const allocation = await approveRequestService(
+      reqId,
+      userId,
+      allocationData,
+    );
     AppResponse.ITEM_CREATED.send(res, allocation);
   } catch (error) {
     next(error);
