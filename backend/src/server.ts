@@ -7,9 +7,13 @@ import AppError from "./Error/app-error.js";
 import { empRouter } from "./routes/emp-routes.js";
 import { assetRoute } from "./routes/assets-routes.js";
 import { assetReqRouter } from "./routes/asset-req-route.js";
+import { limiter } from "./middleware/rate-limit.js";
+
 const app = express();
+app.use(limiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use("/uploads", express.static("uploads"));
 //routes
 app.use("/api/auth", authRouter);

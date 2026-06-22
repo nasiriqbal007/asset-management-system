@@ -14,7 +14,7 @@ export const validateRegister = (schema: ObjectSchema) => {
     }
     req.body = value;
 
-    next();
+    next(error);
   };
 };
 export const validateLogin = (schema: ObjectSchema) => {

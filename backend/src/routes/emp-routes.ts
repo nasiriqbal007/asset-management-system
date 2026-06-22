@@ -3,6 +3,7 @@ import { authMiddleware, requireRole } from "../middleware/auth-middleware.js";
 import {
   createEmpController,
   deleteEmpController,
+  exportEmpCSVController,
   getAllEmpController,
   getEmpByIdController,
   updateEmpController,
@@ -11,6 +12,12 @@ import {
 export const empRouter = Router();
 
 empRouter.get("/", authMiddleware, requireRole(["admin"]), getAllEmpController);
+empRouter.get(
+  "/export",
+  authMiddleware,
+  requireRole(["admin"]),
+  exportEmpCSVController,
+);
 empRouter.get(
   "/:id",
   authMiddleware,

@@ -90,3 +90,12 @@ export const updateEmployee = async (
     throw err;
   }
 };
+export const getAllEmployeesForExport = async (): Promise<User[]> => {
+  const result = await pool.query(
+    `SELECT e.id, e.name, e.department_id, d.department_name as department
+     FROM employees e 
+     LEFT JOIN departments d ON e.department_id = d.id 
+     WHERE role = 'employee'`,
+  );
+  return result.rows;
+};

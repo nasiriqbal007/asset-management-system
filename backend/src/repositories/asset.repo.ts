@@ -175,3 +175,12 @@ export const deleteAsset = async (assetId: number, userId: number) => {
     },
   );
 };
+export const getAllAssetForExport = async (): Promise<Asset[]> => {
+  const result = await pool.query(
+    `SELECT a.*, c.category_name
+     FROM assets a 
+     LEFT JOIN categories c ON a.category_id = c.id
+     ORDER BY a.created_at DESC`,
+  );
+  return result.rows;
+};

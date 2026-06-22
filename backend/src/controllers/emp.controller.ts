@@ -4,11 +4,13 @@ import AppResponse from "../Response/app-response.js";
 import {
   deleteEmp,
   getAllEmp,
+  getAllEmpCSVServiceForExport,
   getEmpById,
   updateEmp,
 } from "../services/employee-service.js";
 import { createUser } from "../repositories/auth.repo.js";
 import type { QueryUser } from "../types/user-types.js";
+import AppError from "../Error/app-error.js";
 
 export const getAllEmpController = async (
   req: Request,
@@ -81,6 +83,35 @@ export const updateEmpController = async (
     const empId = Number(req.params.id);
     const updatedEmp = await updateEmp(empId, req.body);
     AppResponse.PROFILE_UPDATED.send(res, updatedEmp);
+  } catch (error) {
+    next(error);
+  }
+};
+export const exportEmpCSVController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const employees = await getAllEmpCSVServiceForExport();
+    if (!employees || employees.length === 0) {
+      throw AppError.USER_NOT_FOUND;
+    }
+
+    const headers = Object.keys(employees[0]!);
+
+    let csv = headers.join(",") + "\n";
+    employees.forEach((emp) => {
+      const row = Object.values(emp);
+
+      csv += row.join(",") + "\n";
+    });
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename='employee.csv' ",
+    );
+    res.send(csv);
   } catch (error) {
     next(error);
   }

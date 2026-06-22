@@ -3,6 +3,7 @@ import {
   AddAsset,
   deleteAssetId,
   getAllAsset,
+  getAllAssetCSVExportService,
   getAssetById,
   updatedAsset,
 } from "../services/asset-service.js";
@@ -111,6 +112,32 @@ export const deleteAssetController = async (
 
     const deleteAsset = await deleteAssetId(assetId, userId);
     AppResponse.DELETED_ITEM.send(res, deleteAsset);
+  } catch (error) {
+    next(error);
+  }
+};
+export const exportAssetCSVController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const assets = await getAllAssetCSVExportService();
+    if (!assets || assets.length === 0) {
+      throw AppError.USER_NOT_FOUND;
+    }
+
+    const headers = Object.keys(assets[0]!);
+
+    let csv = headers.join(",") + "\n";
+    assets.forEach((a) => {
+      const row = Object.values(a);
+
+      csv += row.join(",") + "\n";
+    });
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment; filename='assets.csv' ");
+    res.send(csv);
   } catch (error) {
     next(error);
   }

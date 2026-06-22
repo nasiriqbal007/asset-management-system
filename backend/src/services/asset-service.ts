@@ -6,6 +6,7 @@ import {
   getAssets,
   updateAsset,
   checkSerialNumberExists,
+  getAllAssetForExport,
 } from "../repositories/asset.repo.js";
 import type {
   AssetQuery,
@@ -56,4 +57,11 @@ export const deleteAssetId = async (assetId: number, userId: number) => {
     throw AppError.ASSET_NOT_FOUND;
   }
   return asset;
+};
+export const getAllAssetCSVExportService = async () => {
+  const assets = await getAllAssetForExport();
+  if (!assets) {
+    AppError.ASSET_NOT_FOUND;
+  }
+  return assets;
 };

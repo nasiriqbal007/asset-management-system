@@ -8,6 +8,6 @@ export const validateAsset = (schema: ObjectSchema) => {
       throw new Error(error.details[0]?.message);
     }
     req.body = value;
-    next();
+    next(error);
   };
 };

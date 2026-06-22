@@ -3,6 +3,7 @@ import { authMiddleware, requireRole } from "../middleware/auth-middleware.js";
 import {
   createAssetController,
   deleteAssetController,
+  exportAssetCSVController,
   getAllAssetsController,
   getAssetByIdController,
   updateAssetController,
@@ -20,6 +21,12 @@ assetRoute.get(
   authMiddleware,
   requireRole(["admin"]),
   getAllAssetsController,
+);
+assetRoute.get(
+  "/export",
+  authMiddleware,
+  requireRole(["admin"]),
+  exportAssetCSVController,
 );
 assetRoute.get(
   "/:id",
