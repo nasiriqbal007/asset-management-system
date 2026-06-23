@@ -1,0 +1,48 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+:root {
+  --primary-light: #e0e7ff;
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+
+  --bg-page: #f8fafc;
+  --bg-card: #ffffff;
+  --border: #e2e8f0;
+
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+
+  --status-success-bg: #dcfce7;
+  --status-success-text: #16a34a;
+
+  --status-warning-bg: #fef3c7;
+  --status-warning-text: #d97706;
+
+  --status-danger-bg: #fee2e2;
+  --status-danger-text: #dc2626;
+
+  --status-info-bg: #dbeafe;
+  --status-info-text: #2563eb;
+
+  --font-sans: "Poppins", sans-serif;
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--primary);
+  color: var(--text-primary);
+}
+
+/* Custom styles for Tailwind components */
+.input-field {
+  @apply rounded-sm border-(--border) bg-(--primary-light) text-sm placeholder:text-(--text-secondary) focus:bg-(--primary-light) focus:outline-0 p-2 w-full focus:ring-2 focus:ring-(--primary) focus:ring-offset-1;
+}
+.primary-button {
+  @apply bg-(--primary) text-(--text-primary) p-2 rounded-md hover:bg-(--primary-hover) transition-colors duration-300 mt-4 cursor-pointer;
+}
+
+.error-message {
+  @apply text-(--status-danger-text) text-sm mt-1;
+}

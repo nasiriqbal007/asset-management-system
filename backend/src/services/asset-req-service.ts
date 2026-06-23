@@ -16,7 +16,6 @@ import type {
   AssetRequest,
   CreateAssetRequestInput,
   ReqStatus,
-  UpdateAssetRequestInput,
 } from "../types/asset-req-type.js";
 import { getAssetById } from "./asset-service.js";
 import { createAllocationService } from "./allocation-service.js";
@@ -95,7 +94,7 @@ export const rejectRequestService = async (reqId: number, userId: number) => {
       throw AppError.VALIDATION_ERROR;
     }
     await client.query(
-      "INSERT INTO audit_logs (user_id,action,entity_type) VALUES($1,$2,$3)",
+      "INSERT INTO activity_logs (user_id,action,entity_type) VALUES($1,$2,$3)",
       [userId, "rejected", "Asset Request"],
     );
     await client.query("COMMIT");
@@ -122,12 +121,12 @@ export const approveRequestService = async (
       throw AppError.NOT_FOUND;
     }
 
-    const allocation = await createAllocationService(data);
+    const allocation = await createAllocationService(userId, data);
     if (!allocation) {
       throw AppError.VALIDATION_ERROR;
     }
     await client.query(
-      "INSERT INTO audit_logs (user_id,action,entity_type) VALUES($1,$2,$3)",
+      "INSERT INTO activity_logs (user_id,action,entity_type) VALUES($1,$2,$3)",
       [userId, "Approved", "Asset Request"],
     );
     await client.query("COMMIT");

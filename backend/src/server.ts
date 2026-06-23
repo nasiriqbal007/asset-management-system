@@ -8,6 +8,7 @@ import { empRouter } from "./routes/emp-routes.js";
 import { assetRoute } from "./routes/assets-routes.js";
 import { assetReqRouter } from "./routes/asset-req-route.js";
 import { limiter } from "./middleware/rate-limit.js";
+import { adminDashboard } from "./routes/admin-dashboard-routes.js";
 
 const app = express();
 app.use(limiter);
@@ -21,6 +22,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/employees", empRouter);
 app.use("/api/assets", assetRoute);
 app.use("/api/requests", assetReqRouter);
+app.use("/api/admin", adminDashboard);
 
 //errorMiddleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

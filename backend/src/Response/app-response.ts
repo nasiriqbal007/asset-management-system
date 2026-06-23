@@ -28,10 +28,22 @@ class AppResponse {
     "Retrieved all employees successfully",
     200,
   );
+  static TOTAL_EMP = new AppResponse("Total employees fetched", 200);
+  static TOTAL_ASSETS = new AppResponse("Total assets fetched", 200);
+  static TOTAL_ALLOCATED = new AppResponse(
+    "Total allocated assets fetched",
+    200,
+  );
+  static TOTAL_AVAILABLE = new AppResponse(
+    "Total available assets fetched",
+    200,
+  );
+  static TOTAL_PENDING = new AppResponse("Total pending requests fetched", 200);
   static GET_ALL_Assets = new AppResponse(
     "Retrieved all assets successfully",
     200,
   );
+  static ACTIVITY_LOGS = new AppResponse("All activity logs fetched", 200);
   static GET_ALL_REQ = new AppResponse("Retrieved all data successfully", 200);
   static ITEM_CREATED = new AppResponse("Item created successfully", 201);
   static Item_BY_ID = new AppResponse("Retrieved one item successfully", 200);

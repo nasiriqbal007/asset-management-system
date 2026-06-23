@@ -3,7 +3,7 @@ import type {
   AssetAllocation,
   createAllocationInput,
 } from "../types/allocation.js";
-import { runTransactionWithLog } from "../utils/audit.helper.js";
+import { runTransactionWithLog } from "./activity.logs.js";
 
 export const createAllocation = async (
   userId: number,

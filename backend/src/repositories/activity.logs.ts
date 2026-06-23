@@ -1,5 +1,5 @@
 import { pool } from "../db/pool.js";
-import type { CreateAuditLogInput } from "../types/audit-log.js";
+import type { AuditLog, CreateAuditLogInput } from "../types/audit-log.js";
 
 export const runTransactionWithLog = async <T>(
   audit: CreateAuditLogInput,
@@ -10,7 +10,7 @@ export const runTransactionWithLog = async <T>(
     await client.query("BEGIN");
     const result = await operation(client);
     await client.query(
-      `INSERT INTO audit_logs(user_id, action,entity_type) VALUES($1,$2,$3) RETURNING *`,
+      `INSERT INTO activity_logs(user_id, action,entity_type) VALUES($1,$2,$3) RETURNING *`,
       [audit.user_id, audit.action, audit.entity_type],
     );
     await client.query("COMMIT");
@@ -20,5 +20,13 @@ export const runTransactionWithLog = async <T>(
     throw error;
   } finally {
     client.release();
+  }
+};
+export const getAllActivityLogs = async (): Promise<AuditLog[]> => {
+  try {
+    const logs = await pool.query("SELECT * FROM activity_logs");
+    return logs.rows;
+  } catch (error) {
+    throw error;
   }
 };

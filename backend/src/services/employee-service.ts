@@ -1,4 +1,5 @@
 import AppError from "../Error/app-error.js";
+import { getAllActivityLogs } from "../repositories/activity.logs.js";
 import {
   deleteEmployee,
   getAllEmployees,

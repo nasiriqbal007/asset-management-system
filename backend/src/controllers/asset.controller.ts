@@ -86,17 +86,20 @@ export const updateAssetController = async (
   try {
     const userId = Number(req.params.userId);
     const assetId = Number(req.params.id);
-    const asset = await updatedAsset(assetId, userId, {
-      ...req.body,
-      image_url: req.file?.path,
-    });
+    const updateData = { ...req.body };
+    if (req.file) {
+      updateData.image_url = req.file.path;
+    }
+    const asset = await updatedAsset(assetId, userId, updateData);
     AppResponse.UPDATED_ITEM.send(res, asset);
   } catch (error) {
-    fs.unlink(req.file?.path || "", (err) => {
-      if (err) {
-        console.error("Error deleting file:", err);
-      }
-    });
+    if (req.file?.path) {
+      fs.unlink(req.file.path, (err) => {
+        if (err) {
+          console.error("Error deleting file:", err);
+        }
+      });
+    }
     next(error);
   }
 };

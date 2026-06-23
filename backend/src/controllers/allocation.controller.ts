@@ -21,10 +21,10 @@ export const assetReturnController = async (
 ) => {
   try {
     const id = Number(req.params.id);
-    const returnAsset = await returnAssetService(id);
+    const userId = Number(req.params.userId);
+    const returnAsset = await returnAssetService(userId, id);
     AppResponse.UPDATED_ITEM.send(res, returnAsset);
   } catch (error) {
     next(error);
   }
 };
-

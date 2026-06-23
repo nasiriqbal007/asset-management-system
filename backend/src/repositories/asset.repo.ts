@@ -6,7 +6,7 @@ import type {
   UpdateAsset,
 } from "../types/asset-type.js";
 import type { PaginatedResult } from "../types/pagination.js";
-import { runTransactionWithLog } from "../utils/audit.helper.js";
+import { runTransactionWithLog } from "./activity.logs.js";
 
 export const checkSerialNumberExists = async (serialNumber: string) => {
   try {

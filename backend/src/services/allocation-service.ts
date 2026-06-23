@@ -10,9 +10,10 @@ import type {
 } from "../types/allocation.js";
 
 export const createAllocationService = async (
+  userId: number,
   data: createAllocationInput,
 ): Promise<AssetAllocation | null> => {
-  const newAllocation = await createAllocation(data);
+  const newAllocation = await createAllocation(userId, data);
   if (!newAllocation) {
     throw AppError.VALIDATION_ERROR;
   }
@@ -20,9 +21,10 @@ export const createAllocationService = async (
 };
 
 export const returnAssetService = async (
+  userId: number,
   id: number,
 ): Promise<AssetAllocation | null> => {
-  const updatedAllocation = await assetReturnDate(id);
+  const updatedAllocation = await assetReturnDate(userId, id);
   if (!updatedAllocation) {
     throw AppError.NOT_FOUND;
   }
