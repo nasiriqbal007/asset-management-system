@@ -37,3 +37,10 @@ export const getUserByEmail = async (email: string) => {
     throw error;
   }
 };
+
+export const getAllDepartments = async () => {
+  const result = await pool.query(
+    "SELECT id, department_name FROM departments",
+  );
+  return result.rows;
+};

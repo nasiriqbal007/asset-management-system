@@ -9,8 +9,10 @@ import { assetRoute } from "./routes/assets-routes.js";
 import { assetReqRouter } from "./routes/asset-req-route.js";
 import { limiter } from "./middleware/rate-limit.js";
 import { adminDashboard } from "./routes/admin-dashboard-routes.js";
+import cors from "cors";
 
 const app = express();
+app.use(cors());
 app.use(limiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

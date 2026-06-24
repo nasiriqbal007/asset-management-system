@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  departmentController,
   LoginController,
   RegisterController,
 } from "../controllers/auth.controller.js";
@@ -22,3 +23,4 @@ authRouter.post(
 );
 authRouter.post("/login", limiter, validateLogin(LoginSchema), LoginController);
 authRouter.get("/profile", authMiddleware, getProfileController);
+authRouter.get("/departments", departmentController);

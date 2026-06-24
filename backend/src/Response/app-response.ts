@@ -14,7 +14,7 @@ class AppResponse {
     return res.status(this.statusCode).json({
       success: true,
       message: this.message,
-      ...payload,
+      payload,
     });
   }
 

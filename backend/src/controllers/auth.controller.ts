@@ -1,5 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
-import { authenticate, registerUser } from "../services/auth-service.js";
+import {
+  authenticate,
+  getAllDepService,
+  registerUser,
+} from "../services/auth-service.js";
 import AppError from "../Error/app-error.js";
 import AppResponse from "../Response/app-response.js";
 
@@ -32,5 +36,13 @@ export const LoginController = async (req: Request, res: Response) => {
         message: "An unexpected error occurred",
       });
     }
+  }
+};
+export const departmentController = async (req: Request, res: Response) => {
+  try {
+    const department = await getAllDepService();
+    AppResponse.GET_ALL_EMP.send(res, department);
+  } catch (error) {
+    throw AppError.NOT_FOUND;
   }
 };

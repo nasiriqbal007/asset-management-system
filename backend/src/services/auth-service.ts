@@ -1,6 +1,10 @@
 import { config } from "../config/env.js";
 import AppError from "../Error/app-error.js";
-import { createUser, getUserByEmail } from "../repositories/auth.repo.js";
+import {
+  createUser,
+  getAllDepartments,
+  getUserByEmail,
+} from "../repositories/auth.repo.js";
 import type { CreateUserInput, LoginInput } from "../types/user-types.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -50,4 +54,11 @@ export const getUserProfile = async (id: number) => {
     throw AppError.USER_NOT_FOUND;
   }
   return user;
+};
+export const getAllDepService = async () => {
+  const department = await getAllDepartments();
+  if (!department) {
+    throw AppError.NOT_FOUND;
+  }
+  return department;
 };

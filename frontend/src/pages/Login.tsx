@@ -1,4 +1,7 @@
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { type SubmitHandler } from "react-hook-form";
+import { Input } from "../components/Input";
+import { useLogin } from "../hooks/useAuth";
+import { useNavigate } from "react-router";
 
 type FormInput = {
   email: string;
@@ -6,13 +9,20 @@ type FormInput = {
 };
 
 export const Login = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormInput>();
-  const onSubmit: SubmitHandler<FormInput> = (data) => {
-    console.log(data);
+  const navigate = useNavigate();
+  const { register, handleSubmit, errors, onLogin } = useLogin();
+  const onSubmit: SubmitHandler<FormInput> = async (data) => {
+    try {
+      const res = await onLogin(data);
+      if (res?.user?.role && res?.token) {
+        localStorage.setItem("user", JSON.stringify(res.user));
+        if (res?.user?.role === "admin" && res?.users?.token == res.token) {
+          navigate("/admin/dashboard");
+        }
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
   };
   return (
     <div className="flex justify-center items-center bg-(--primary-light) p-6 h-screen">
@@ -24,11 +34,11 @@ export const Login = () => {
           </p>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
-          <label className="text(--text-primary) text-md " htmlFor="email">
-            Email
-          </label>
-          <input
-            className="input-field"
+          <Input
+            label="Email"
+            type="email"
+            placeholder="Enter your email"
+            error={errors.email?.message}
             {...register("email", {
               required: "Email is required",
               pattern: {
@@ -37,21 +47,18 @@ export const Login = () => {
               },
             })}
           />
-          {errors.email && (
-            <span className="error-message">{errors.email.message}</span>
-          )}
-          <label htmlFor="password">Password</label>
-          <input
-            className="input-field"
+
+          <Input
+            label="Password"
+            type="password"
+            placeholder="Enter your password"
+            error={errors.password?.message}
             {...register("password", {
               required: "Password is required",
               minLength: { value: 6, message: "Minimum 6 characters" },
             })}
-            type="password"
           />
-          {errors.password && (
-            <span className="error-message">{errors.password.message}</span>
-          )}
+
           <button type="submit" className=" primary-button">
             Login
           </button>
