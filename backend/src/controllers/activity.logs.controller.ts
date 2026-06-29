@@ -7,7 +7,9 @@ export const getActivityController = async (
   next: NextFunction,
 ) => {
   try {
-    const activities = await getAllActivityService;
+    const activities = await getAllActivityService();
     AppResponse.ACTIVITY_LOGS.send(res, activities);
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
 };

@@ -20,7 +20,7 @@ type Department = {
 export const SignUp = () => {
   const { departments } = useFetchAllDep();
   console.log("Departments in SignUp component:", departments);
-  const { register, handleSubmit, errors, onSignUp } = useSignUp();
+  const { register, handleSubmit, errors, onSignUp, isLoading } = useSignUp();
   const onSubmit: SubmitHandler<FormInput> = (data) => {
     onSignUp(data);
     console.log("Form Data:", data);
@@ -91,7 +91,7 @@ export const SignUp = () => {
             })}
           />
           <button type="submit" className=" primary-button">
-            Sign Up
+            {isLoading ? "Signing up..." : "  Sign Up"}
           </button>
         </form>
       </div>

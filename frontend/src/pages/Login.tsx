@@ -10,18 +10,23 @@ type FormInput = {
 
 export const Login = () => {
   const navigate = useNavigate();
-  const { register, handleSubmit, errors, onLogin } = useLogin();
+  const { register, handleSubmit, errors, onLogin, isLoading } = useLogin();
   const onSubmit: SubmitHandler<FormInput> = async (data) => {
     try {
       const res = await onLogin(data);
-      if (res?.user?.role && res?.token) {
-        localStorage.setItem("user", JSON.stringify(res.user));
-        if (res?.user?.role === "admin" && res?.users?.token == res.token) {
+      console.log("Login response:", res);
+      if (res) {
+        localStorage.setItem("token", res.token);
+        localStorage.setItem("role", res.user.role);
+        console.log("Login successful:", res.user.role);
+        if (res.user.role === "admin") {
           navigate("/admin/dashboard");
+        } else {
+          navigate("/employee");
         }
       }
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error("Login error:", error);
     }
   };
   return (
@@ -55,12 +60,13 @@ export const Login = () => {
             error={errors.password?.message}
             {...register("password", {
               required: "Password is required",
+
               minLength: { value: 6, message: "Minimum 6 characters" },
             })}
           />
 
           <button type="submit" className=" primary-button">
-            Login
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>

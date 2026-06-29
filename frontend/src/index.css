@@ -42,6 +42,12 @@ body {
 .primary-button {
   @apply bg-(--primary) text-(--text-primary) p-2 rounded-md hover:bg-(--primary-hover) transition-colors duration-300 mt-4 cursor-pointer;
 }
+.secondary-button {
+  @apply bg-(--bg-card) text-(--text-secondary) p-2 rounded-md border border-(--border) hover:bg-(--primary-light) transition-colors duration-300 mt-4 cursor-pointer;
+}
+.text-btn {
+  @apply text-sm px-3 py-1 rounded-md border hover:bg-(--primary-hover) cursor-pointer transition-colors duration-300;
+}
 
 .error-message {
   @apply text-(--status-danger-text) text-sm mt-1;

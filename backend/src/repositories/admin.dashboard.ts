@@ -23,7 +23,7 @@ export const getTotalAssets = async (): Promise<number> => {
 export const getTotalAllocations = async (): Promise<number> => {
   try {
     const totalAsset = await pool.query(
-      "SELECT COUNT(*) AS total FROM asset_allocation",
+      "SELECT COUNT(*) AS total FROM asset_allocations",
     );
     return Number(totalAsset.rows[0].total);
   } catch (error) {

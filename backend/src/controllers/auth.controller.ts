@@ -20,29 +20,27 @@ export const RegisterController = async (
   }
 };
 
-export const LoginController = async (req: Request, res: Response) => {
+export const LoginController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { user, token } = await authenticate(req.body);
     AppResponse.LOGIN_SUCCESSFUL.send(res, { user, token });
   } catch (error) {
-    if (error instanceof AppError) {
-      res.status(error.statusCode).json({
-        success: false,
-        message: error.message,
-      });
-    } else {
-      res.status(500).json({
-        success: false,
-        message: "An unexpected error occurred",
-      });
-    }
+    next(error);
   }
 };
-export const departmentController = async (req: Request, res: Response) => {
+export const departmentController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const department = await getAllDepService();
     AppResponse.GET_ALL_EMP.send(res, department);
   } catch (error) {
-    throw AppError.NOT_FOUND;
+    next(error);
   }
 };

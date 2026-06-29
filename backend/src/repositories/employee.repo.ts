@@ -37,7 +37,7 @@ export const getAllEmployees = async (
     values.push(offset);
 
     const result = await pool.query(
-      `SELECT e.id, e.name, e.department_id, d.department_name as department,
+      `SELECT e.id, e.name,e.email,e.role, e.created_at, e.department_id, d.department_name as department,
       COUNT(*) OVER() as total
        FROM employees e 
        LEFT JOIN departments d ON e.department_id = d.id 

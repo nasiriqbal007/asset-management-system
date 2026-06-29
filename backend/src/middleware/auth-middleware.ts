@@ -10,18 +10,17 @@ export const validateRegister = (schema: ObjectSchema) => {
     const { value, error } = schema.validate(req.body);
 
     if (error) {
-      throw new Error(error.details[0]?.message);
+      return next(new Error(error.details[0]?.message));
     }
     req.body = value;
-
-    next(error);
+    next();
   };
 };
 export const validateLogin = (schema: ObjectSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const { value, error } = schema.validate(req.body);
     if (error) {
-      throw new Error(error.details[0]?.message);
+      return next(new Error(error.details[0]?.message));
     }
     req.body = value;
     next();
@@ -32,7 +31,7 @@ export const updateEmpValidate = (schema: ObjectSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     const { value, error } = schema.validate(req.body);
     if (error) {
-      throw new Error(error.details[0]?.message);
+      return next(new Error(error.details[0]?.message));
     }
     req.body = value;
     next();
@@ -56,7 +55,6 @@ export const authMiddleware = (
   } catch (err) {
     throw AppError.UNAUTHORIZED;
   }
-  AppError.INTERNAL_SERVER_ERROR;
 };
 export const requireRole = (role: string[]) => {
   return (

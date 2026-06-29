@@ -23,17 +23,22 @@ export const useLogin = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginInput>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const onLogin = async (data: LoginInput) => {
+    setIsLoading(true);
     try {
       const res = await LoginService(data);
-      console.log("Login response:", res.data.payload);
+
       return res.data.payload;
     } catch (error) {
       console.error("Login error:", error);
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
-  return { register, handleSubmit, errors, onLogin };
+  return { register, handleSubmit, errors, onLogin, isLoading };
 };
 
 export const useSignUp = () => {
@@ -42,17 +47,20 @@ export const useSignUp = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<SignUpInput>();
-
+  const [isLoading, setIsLoading] = useState(false);
   const onSignUp = async (data: SignUpInput) => {
+    setIsLoading(true);
     try {
       const res = await SignUpService(data);
       return res.data;
     } catch (error) {
       console.error("SignUp error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  return { register, handleSubmit, errors, onSignUp };
+  return { register, handleSubmit, errors, onSignUp, isLoading };
 };
 
 export const useProfile = () => {
