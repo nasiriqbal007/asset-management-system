@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
+import bcrypt from "bcrypt";
 
 import AppResponse from "../Response/app-response.js";
 import {
@@ -55,7 +56,12 @@ export const createEmpController = async (
   next: NextFunction,
 ) => {
   try {
-    const newEmp = await createUser(req.body);
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+    const newEmp = await createUser({
+      ...req.body,
+      password: hashedPassword,
+    });
     AppResponse.USER_REGISTERED.send(res, newEmp);
   } catch (error) {
     next(error);

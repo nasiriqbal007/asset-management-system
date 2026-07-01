@@ -32,7 +32,9 @@ export const useRequests = () => {
       setRequests((prevRequests) =>
         prevRequests.filter((request) => request.id !== id),
       );
-    } catch (error) {
+    } catch (error: any) {
+      console.log(error.response?.data);
+      console.log(error.response?.status);
       console.error("Error rejecting request:", error);
     }
   };

@@ -84,6 +84,7 @@ export const rejectRequestService = async (reqId: number, userId: number) => {
     if (!req) {
       throw AppError.NOT_FOUND;
     }
+
     if (req.status !== "pending") {
       throw AppError.VALIDATION_ERROR;
     }
@@ -94,8 +95,8 @@ export const rejectRequestService = async (reqId: number, userId: number) => {
       throw AppError.VALIDATION_ERROR;
     }
     await client.query(
-      "INSERT INTO activity_logs (user_id,action,entity_type) VALUES($1,$2,$3)",
-      [userId, "rejected", "Asset Request"],
+      "INSERT INTO activity_logs (user_id, action, entity_type,entity_id) VALUES ($1,$2,$3,$4)",
+      [userId, "rejected", "Asset Request", reqId],
     );
     await client.query("COMMIT");
   } catch (error) {
@@ -126,8 +127,8 @@ export const approveRequestService = async (
       throw AppError.VALIDATION_ERROR;
     }
     await client.query(
-      "INSERT INTO activity_logs (user_id,action,entity_type) VALUES($1,$2,$3)",
-      [userId, "Approved", "Asset Request"],
+      "INSERT INTO activity_logs (user_id,action,entity_type, entity_id) VALUES($1,$2,$3,$4)",
+      [userId, "Approved", "Asset Request", reqId],
     );
     await client.query("COMMIT");
     return allocation;

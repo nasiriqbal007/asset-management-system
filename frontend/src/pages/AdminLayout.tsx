@@ -8,13 +8,13 @@ export const AdminLayout = () => {
   return (
     <div className="flex h-screen bg-(--bg-page) text-(--text-primary) ">
       <aside className="w-64 flex flex-col border-r border-(--border) bg-(--primary-light)">
-        <div className="p-4 text-xl font-bold">Asset Manager</div>
+        <div className="p-4 text-xl font-semibold">Asset Manager</div>
         <nav className="flex flex-col gap-1 p-4">
           <NavLink
             className={({ isActive }) =>
               isActive
-                ? "bg-(--primary) text-xl font-bold text-(--text-primary) py-2 rounded-md pl-2 transition duration-300 ease-in-out"
-                : "bg-(--primary-light) text-xl  text-(--text-primary) py-2 hover:bg-(--primary-hover) rounded-md cursor-pointer transition duration-300 ease-in-out"
+                ? "bg-(--primary) text-xl font-semibold text-(--text-primary) py-2 rounded-md pl-2 transition duration-300 ease-in-out"
+                : "bg-(--primary-light) text-xl  text-(--text-primary) py-2 hover:bg-(--primary-hover) hover:pl-2 rounded-md cursor-pointer transition duration-300 ease-in-out"
             }
             to="/admin/dashboard"
           >
@@ -23,8 +23,8 @@ export const AdminLayout = () => {
           <NavLink
             className={({ isActive }) =>
               isActive
-                ? "bg-(--primary) text-xl font-bold text-(--text-primary) py-2 rounded-md pl-2 transition duration-300 ease-in-out"
-                : "bg-(--primary-light) text-xl  text-(--text-primary) py-2 hover:bg-(--primary-hover) rounded-md cursor-pointer transition duration-300 ease-in-out"
+                ? "bg-(--primary) text-xl font-semibold text-(--text-primary) py-2 rounded-md pl-2 transition duration-300 ease-in-out"
+                : "bg-(--primary-light) text-xl  text-(--text-primary) py-2 hover:bg-(--primary-hover) hover:pl-2 rounded-md cursor-pointer transition duration-300 ease-in-out"
             }
             to="/admin/employees"
           >
@@ -33,8 +33,8 @@ export const AdminLayout = () => {
           <NavLink
             className={({ isActive }) =>
               isActive
-                ? "bg-(--primary) text-xl font-bold text-(--text-primary) py-2 rounded-md pl-2 transition duration-300 ease-in-out"
-                : "bg-(--primary-light) text-xl  text-(--text-primary) py-2 hover:bg-(--primary-hover) rounded-md cursor-pointer transition duration-300 ease-in-out"
+                ? "bg-(--primary) text-xl font-semibold text-(--text-primary) py-2 rounded-md pl-2 transition duration-300 ease-in-out"
+                : "bg-(--primary-light) text-xl  text-(--text-primary) py-2 hover:bg-(--primary-hover) hover:pl-2 rounded-md cursor-pointer transition duration-300 ease-in-out"
             }
             to="/admin/assets"
           >
@@ -43,8 +43,8 @@ export const AdminLayout = () => {
           <NavLink
             className={({ isActive }) =>
               isActive
-                ? "bg-(--primary) text-xl font-bold text-(--text-primary) py-2 rounded-md pl-2 transition duration-300 ease-in-out"
-                : "bg-(--primary-light) text-xl  text-(--text-primary) py-2 hover:bg-(--primary-hover) rounded-md cursor-pointer transition duration-300 ease-in-out"
+                ? "bg-(--primary) text-xl font-semibold text-(--text-primary) py-2 rounded-md pl-2 transition duration-300 ease-in-out"
+                : "bg-(--primary-light) text-xl  text-(--text-primary) py-2 hover:bg-(--primary-hover) hover:pl-2 rounded-md cursor-pointer transition duration-300 ease-in-out"
             }
             to="/admin/requests"
           >
@@ -53,8 +53,8 @@ export const AdminLayout = () => {
           <NavLink
             className={({ isActive }) =>
               isActive
-                ? "bg-(--primary) text-xl font-bold text-(--text-primary) py-2 rounded-md pl-2 transition duration-300 ease-in-out"
-                : "bg-(--primary-light) text-xl  text-(--text-primary) py-2 hover:bg-(--primary-hover) rounded-md cursor-pointer transition duration-300 ease-in-out"
+                ? "bg-(--primary) text-xl font-semibold text-(--primary-light) py-2 rounded-md pl-2 transition duration-300 ease-in-out"
+                : "bg-(--primary-light) text-xl  text-(--text-primary) py-2 hover:bg-(--primary-hover) hover:pl-2 rounded-md cursor-pointer transition duration-300 ease-in-out"
             }
             to="/admin/allocations"
           >
@@ -63,8 +63,8 @@ export const AdminLayout = () => {
           <NavLink
             className={({ isActive }) =>
               isActive
-                ? "bg-(--primary) text-xl font-bold text-(--text-primary) py-2 rounded-md pl-2 transition duration-300 ease-in-out"
-                : "bg-(--primary-light) text-xl  text-(--text-primary) py-2 hover:bg-(--primary-hover) rounded-md cursor-pointer transition duration-300 ease-in-out"
+                ? "bg-(--primary) text-xl font-semibold text-(--text-primary) py-2 rounded-md pl-2 transition duration-300 ease-in-out"
+                : "bg-(--primary-light) text-xl  text-(--text-primary) py-2 hover:bg-(--primary-hover) hover:pl-2 rounded-md cursor-pointer transition duration-300 ease-in-out"
             }
             to="/admin/logs"
           >
@@ -73,12 +73,12 @@ export const AdminLayout = () => {
         </nav>
       </aside>
 
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 ">
         <header className="h-16 border-(--border) border-b flex items-center justify-end px-6">
           <span>Welcome, {profile?.name ?? "Loading..."}</span>
 
           <button
-            className="ml-4 bg-(--primary) text-(--text-primary) py-1 px-3 rounded-md hover:bg-(--primary-hover) transition duration-300 ease-in-out"
+            className="primary-button ml-4"
             onClick={() => {
               if (window.confirm("Are you sure you want to logout?")) {
                 localStorage.removeItem("token");

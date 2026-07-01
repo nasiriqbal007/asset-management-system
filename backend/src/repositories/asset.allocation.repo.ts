@@ -14,6 +14,7 @@ export const createAllocation = async (
       user_id: userId,
       action: "Create",
       entity_type: "Asset Allocation",
+      entity_id: userId,
     },
     async (client) => {
       const newAllocation = await client.query(
@@ -37,6 +38,7 @@ export const assetReturnDate = async (
       user_id: userId,
       action: "Create",
       entity_type: "Asset Allocation",
+      entity_id: id,
     },
     async (client) => {
       const update = await client.query(
@@ -67,11 +69,12 @@ SELECT asset_allocations.*, assets.asset_name, employees.name AS employee_name
 
 export const checkAvailability = async (assetId: number): Promise<boolean> => {
   try {
-    const isAvailable = await pool.query(
-      "SELECT 1 FROM asset_allocations WHERE asset_id=$1 AND returned_date is NOT NULL",
+    const res = await pool.query(
+      "SELECT 1 FROM asset_allocations WHERE asset_id=$1 AND returned_date IS NULL LIMIT 1",
       [assetId],
     );
-    return (isAvailable.rowCount ?? 0) > 0;
+
+    return (res.rowCount ?? 0) === 0;
   } catch (error) {
     throw error;
   }

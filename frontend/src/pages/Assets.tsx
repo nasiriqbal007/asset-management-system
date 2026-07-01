@@ -6,6 +6,7 @@ import { AssetModal } from "../components/AssetModel";
 import { Package } from "lucide-react";
 import { useCategories } from "../hooks/useCategories";
 import { DropDown } from "../components/DropDown";
+import { Input } from "../components/Input";
 
 export const Assets = () => {
   const [isModelOpen, setOpenModel] = useState(false);
@@ -16,9 +17,12 @@ export const Assets = () => {
     createAsset,
     updateAsset,
     AssetDelete,
-    setSearchField,
-    searchField,
-    setSearchQuery,
+    searchText,
+    setSearchText,
+    status,
+    setStatus,
+    categoryId,
+    setCategoryId,
   } = useAsset();
   const { categories } = useCategories();
 
@@ -31,53 +35,45 @@ export const Assets = () => {
   };
 
   return (
-    <div className="px-2 py2 bg-(--bg-page)">
+    <div className="px-2 py-2 bg-(--bg-page) min-h-screen">
       {isLoading && (
         <p className="flex items-center justify-center">Loading...</p>
       )}
-      <div className="flex justify-end gap-8 items-center  ">
+      <div className="flex flex-wrap justify-between gap-4 items-center">
+        <Input
+          label="Search"
+          type="text"
+          placeholder="Search asset name..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          className="flex-1 min-w-55"
+        />
+
         <DropDown
-          label="Search by"
-          value={searchField}
-          onChange={(e) => setSearchField(e.target.value as typeof searchField)}
+          label="Status"
+          value={status}
+          onChange={(e) => setStatus(e.target.value as typeof status)}
           options={[
-            { value: "asset_name", label: "Name" },
-            { value: "serial_number", label: "Serial Number" },
-            { value: "status", label: "Status" },
-            { value: "category_id", label: "Category" },
+            { value: "available", label: "Available" },
+            { value: "allocated", label: "Allocated" },
+            { value: "damaged", label: "Damaged" },
+            { value: "retired", label: "Retired" },
           ]}
         />
 
-        {searchField === "status" ? (
-          <DropDown
-            label="va"
-            onChange={(e) => setSearchQuery(e.target.value)}
-            options={[
-              { value: "available", label: "Available" },
-              { value: "allocated", label: "Allocated" },
-              { value: "damaged", label: "Damaged" },
-              { value: "retired", label: "Retired" },
-            ]}
-          />
-        ) : searchField === "category_id" ? (
-          <DropDown
-            label="Category"
-            onChange={(e) => setSearchQuery(e.target.value)}
-            options={
-              categories?.map((cat) => ({
-                value: cat.id,
-                label: cat.category_name,
-              })) ?? []
-            }
-          />
-        ) : (
-          <input
-            type="text"
-            placeholder="Search assets..."
-            className="border border-(--border-color) rounded px-2 py-1"
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        )}
+        <DropDown
+          label="Category"
+          value={categoryId}
+          onChange={(e) =>
+            setCategoryId(e.target.value ? Number(e.target.value) : "")
+          }
+          options={
+            categories?.map((cat) => ({
+              value: cat.id,
+              label: cat.category_name,
+            })) ?? []
+          }
+        />
       </div>
       <div className="flex justify-end">
         <button

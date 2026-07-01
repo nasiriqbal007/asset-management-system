@@ -10,6 +10,7 @@ import {
 import AppResponse from "../Response/app-response.js";
 import type { ReqStatus } from "../types/asset-req-type.js";
 import AppError from "../Error/app-error.js";
+import type { jwtPayload } from "../types/user-types.js";
 
 export const getAllReqController = async (
   req: Request,
@@ -60,13 +61,21 @@ export const getReqByIdController = async (
 };
 
 export const ApproveReqController = async (
-  req: Request,
+  req: Request & { user?: jwtPayload },
   res: Response,
   next: NextFunction,
 ) => {
   try {
     const reqId = Number(req.params.id);
-    const userId = Number(req.params.userId);
+    if (!reqId || Number.isNaN(reqId)) {
+      throw AppError.NOT_FOUND;
+    }
+
+    const userId = Number(req.user?.userId);
+    if (!userId) {
+      throw AppError.UNAUTHORIZED;
+    }
+
     const updateData = req.body;
     const updatedReq = await approveRequestService(reqId, userId, updateData);
     AppResponse.UPDATED_ITEM.send(res, updatedReq);
@@ -87,32 +96,40 @@ export const createReqController = async (
   }
 };
 export const rejectReqController = async (
-  req: Request,
+  req: Request & { user?: jwtPayload },
   res: Response,
   next: NextFunction,
 ) => {
   try {
     const reqId = Number(req.params.id);
-    const userId = Number(req.params.userId);
-    const rejected = await rejectRequestService(reqId, userId);
-    AppResponse.UPDATED_ITEM.send(res, rejected);
-    if (!reqId) {
+    if (!reqId || Number.isNaN(reqId)) {
       throw AppError.NOT_FOUND;
     }
+
+    const userId = Number(req.user?.userId);
+    if (!userId) {
+      throw AppError.UNAUTHORIZED;
+    }
+
+    const rejected = await rejectRequestService(reqId, userId);
+    AppResponse.UPDATED_ITEM.send(res, rejected);
   } catch (error) {
     next(error);
   }
 };
 export const approveReqController = async (
-  req: Request,
+  req: Request & { user?: jwtPayload },
   res: Response,
   next: NextFunction,
 ) => {
   try {
     const reqId = Number(req.params.id);
-    const userId = Number(req.params.userId);
+    const userId = Number(req.user?.userId);
     const allocationData = req.body;
 
+    if (!userId) {
+      throw AppError.UNAUTHORIZED;
+    }
     if (!reqId) {
       throw AppError.NOT_FOUND;
     }

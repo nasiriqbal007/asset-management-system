@@ -19,7 +19,7 @@ export const assetRoute = Router();
 assetRoute.get(
   "/",
   authMiddleware,
-  requireRole(["admin"]),
+  requireRole(["admin", "employee"]),
   getAllAssetsController,
 );
 assetRoute.get(

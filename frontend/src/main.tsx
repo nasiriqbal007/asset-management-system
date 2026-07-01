@@ -13,6 +13,9 @@ import { Assets } from "./pages/Assets";
 import { Requests } from "./pages/Requests";
 import { Allocations } from "./pages/Allocations";
 import { ActivityLogs } from "./pages/ActivityLogs";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { MyAssets } from "./pages/MyAssets";
+import { AvailableAssets } from "./pages/Available";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -22,7 +25,12 @@ const router = createBrowserRouter([
   { path: "/admin/signup", element: <SignUp /> },
   {
     path: "/admin",
-    element: <AdminLayout />,
+
+    element: (
+      <ProtectedRoute role="admin">
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { path: "dashboard", element: <Dashboard /> },
       { path: "employees", element: <Employees /> },
@@ -32,7 +40,21 @@ const router = createBrowserRouter([
       { path: "logs", element: <ActivityLogs /> },
     ],
   },
-  { path: "/employee", element: <Employee /> },
+  {
+    path: "/employee",
+    element: (
+      <ProtectedRoute role="employee">
+        <Employee />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        path: "available-assets",
+        element: <AvailableAssets />,
+      },
+      { path: "my-assets", element: <MyAssets /> },
+    ],
+  },
 ]);
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

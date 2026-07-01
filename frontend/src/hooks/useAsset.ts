@@ -3,6 +3,7 @@ import type {
   Asset,
   AssetCreateInput,
   AssetQueryParams,
+  AssetStatus,
   AssetUpdateInput,
 } from "../types/asset";
 import {
@@ -14,19 +15,17 @@ import {
 
 export const useAsset = () => {
   const [assets, setAssets] = useState<Asset[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchField, setSearchField] = useState<
-    "asset_name" | "serial_number" | "status" | "category_id"
-  >("asset_name");
+  const [searchText, setSearchText] = useState("");
+  const [status, setStatus] = useState<AssetStatus | "">("");
+  const [categoryId, setCategoryId] = useState<number | "">("");
 
-  const [debounceSearch, setDebouncedSearch] = useState(searchQuery);
+  const [debouncedSearchText, setDebouncedSearchText] = useState(searchText);
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedSearch(searchQuery);
+      setDebouncedSearchText(searchText);
     }, 500);
     return () => clearTimeout(timer);
-  }, [searchQuery]);
-  console.log(searchField, searchQuery);
+  }, [searchText]);
 
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
@@ -34,11 +33,11 @@ export const useAsset = () => {
       setIsLoading(true);
       try {
         const res = await getAllAssetList({
-          [searchField]: debounceSearch,
+          asset_name: debouncedSearchText || undefined,
+          status: status || undefined,
+          category_id: categoryId === "" ? undefined : categoryId,
         } as AssetQueryParams);
         setAssets(res.data.payload.assets.data);
-
-        console.log("assets fetched ", res.data.payload.assets.data);
       } catch (error) {
         console.error("Error fetching assets:", error);
       } finally {
@@ -46,7 +45,7 @@ export const useAsset = () => {
       }
     };
     fetchAssets();
-  }, [debounceSearch, searchField]);
+  }, [debouncedSearchText, status, categoryId]);
 
   const createAsset = async (data: AssetCreateInput) => {
     setIsLoading(true);
@@ -96,9 +95,11 @@ export const useAsset = () => {
     createAsset,
     updateAsset,
     AssetDelete,
-    searchField,
-    setSearchField,
-    searchQuery,
-    setSearchQuery,
+    searchText,
+    setSearchText,
+    status,
+    setStatus,
+    categoryId,
+    setCategoryId,
   };
 };

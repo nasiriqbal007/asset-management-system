@@ -3,10 +3,12 @@ export type AuditLog = {
   user_id: number;
   action: string;
   entity_type: string;
+  entity_id: number | null;
 };
 
 export type CreateAuditLogInput = {
   user_id: number;
   action: string;
   entity_type: string;
+  entity_id: number | null;
 };

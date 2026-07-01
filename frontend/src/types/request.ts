@@ -13,10 +13,7 @@ export type AssetRequest = {
 
 export type CreateAssetRequestInput = Omit<
   AssetRequest,
-  "id" | "created_at" | "status"
+  "id" | "created_at" | "status" | "employee_name" | "asset_name"
 > & {
   status?: ReqStatus;
-};
-export type UpdateAssetRequestInput = {
-  status: ReqStatus;
 };

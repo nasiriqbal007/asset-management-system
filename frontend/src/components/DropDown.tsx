@@ -14,11 +14,11 @@ type SelectProps = {
 export const DropDown = ({ label, options, error, ...props }: SelectProps) => (
   <div className="flex flex-col gap-1">
     <label className="text-sm font-medium text-(--text-primary)">{label}</label>
-    <select className="input-field" {...props}>
+    <select className="input-field " {...props}>
       <option value="">Select...</option>
       {options.map((opt) => (
         <option
-          className="text-sm text-(--primary-text)"
+          className="text-sm text-(--primary-text) "
           key={opt.value}
           value={opt.value}
         >

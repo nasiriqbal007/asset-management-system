@@ -40,7 +40,7 @@ body {
   @apply rounded-sm border-(--border) bg-(--primary-light) text-sm placeholder:text-(--text-secondary) focus:bg-(--primary-light) focus:outline-0 p-2 w-full focus:ring-2 focus:ring-(--primary) focus:ring-offset-1;
 }
 .primary-button {
-  @apply bg-(--primary) text-(--text-primary) p-2 rounded-md hover:bg-(--primary-hover) transition-colors duration-300 mt-4 cursor-pointer;
+  @apply bg-(--primary) text-(--primary-light) px-3 py-2 rounded-md hover:bg-(--primary-hover) transition-colors duration-300 mt-4 cursor-pointer;
 }
 .secondary-button {
   @apply bg-(--bg-card) text-(--text-secondary) p-2 rounded-md border border-(--border) hover:bg-(--primary-light) transition-colors duration-300 mt-4 cursor-pointer;

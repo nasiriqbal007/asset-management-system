@@ -17,6 +17,7 @@ export const Requests = () => {
     { key: "asset_name", label: "Asset Name" },
     { key: "request_reason", label: "Request Reason" },
     { key: "employee_name", label: "Employee Name" },
+
     { key: "status", label: "Status" },
   ];
 
@@ -24,11 +25,16 @@ export const Requests = () => {
     {
       label: "Approve",
       onClick: (row: AssetRequest) => handleApproveRequest(row.id),
+
       show: (row: AssetRequest) => row.status === "pending",
     },
     {
       label: "Reject",
-      onClick: (row: AssetRequest) => handleRejectRequest(row.id),
+      onClick: (row: AssetRequest) => {
+        console.log("row:", row);
+        console.log("assetId before function:", row.asset_id);
+        handleRejectRequest(row.id);
+      },
       show: (row: AssetRequest) => row.status === "pending",
     },
   ];
@@ -36,7 +42,8 @@ export const Requests = () => {
   const handleFilterChange = (event: ChangeEvent<HTMLSelectElement>) => {
     fetchReqByStatus(event.target.value);
   };
-
+  console.log(requests);
+  console.log(requests, "requests");
   return (
     <div className="px-2 py-2 bg-(--bg-page)">
       <select
