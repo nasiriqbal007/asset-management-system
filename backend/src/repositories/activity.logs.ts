@@ -24,7 +24,8 @@ export const runTransactionWithLog = async <T>(
 };
 export const getAllActivityLogs = async (): Promise<AuditLog[]> => {
   try {
-    const logs = await pool.query("SELECT * FROM activity_logs");
+    const logs = await pool.query(`SELECT a.*, e.name FROM activity_logs a
+    JOIN employees e ON a.user_id = e.id  ORDER BY a.created_at DESC  `);
     return logs.rows;
   } catch (error) {
     throw error;

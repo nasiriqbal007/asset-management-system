@@ -1,7 +1,8 @@
-import { NavLink, Outlet } from "react-router";
+import { NavLink, Outlet, useNavigate } from "react-router";
 import { useProfile } from "../hooks/useAuth";
 
 export const AdminLayout = () => {
+  const navigate = useNavigate();
   const { profile } = useProfile();
 
   return (
@@ -75,6 +76,19 @@ export const AdminLayout = () => {
       <div className="flex flex-col flex-1">
         <header className="h-16 border-(--border) border-b flex items-center justify-end px-6">
           <span>Welcome, {profile?.name ?? "Loading..."}</span>
+
+          <button
+            className="ml-4 bg-(--primary) text-(--text-primary) py-1 px-3 rounded-md hover:bg-(--primary-hover) transition duration-300 ease-in-out"
+            onClick={() => {
+              if (window.confirm("Are you sure you want to logout?")) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("role");
+                navigate("/login", { replace: true });
+              }
+            }}
+          >
+            Logout
+          </button>
         </header>
 
         <main className="p-6 overflow-auto">

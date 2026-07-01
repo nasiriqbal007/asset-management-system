@@ -1,24 +1,48 @@
 import { useForm } from "react-hook-form";
 import { Input } from "./Input";
 import { DropDown } from "./DropDown";
-import type { Asset, AssetCreateInput } from "../types/asset";
-import { useFetchAllDep } from "../hooks/useAuth";
+import type { Asset, AssetCreateInput, AssetUpdateInput } from "../types/asset";
+import { useCategories } from "../hooks/useCategories";
+import { useEffect, useState } from "react";
 
 type AssetModalProps = {
   asset?: Asset | null;
   onClose: () => void;
-  onSubmit: (data: AssetCreateInput) => void;
+  onSubmit: (data: AssetCreateInput | AssetUpdateInput) => void;
 };
 
 export const AssetModal = ({ asset, onClose, onSubmit }: AssetModalProps) => {
-  const { departments } = useFetchAllDep();
+  const { categories } = useCategories();
+  const [file, setImageFile] = useState<File | null>(null);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<AssetCreateInput>({
-    defaultValues: asset ?? {},
-  });
+    reset,
+  } = useForm<AssetCreateInput | AssetUpdateInput>();
+  useEffect(() => {
+    if (asset && categories?.length) {
+      reset({
+        ...asset,
+        purchase_date: asset.purchase_date?.split("T")[0],
+        category_id: Number(asset.category_id),
+      });
+    }
+  }, [asset, categories, reset]);
+
+  const handleFormSubmit = (data: AssetCreateInput | AssetUpdateInput) => {
+    const formData = new FormData();
+    formData.append("asset_name", data.asset_name ?? "");
+    formData.append("serial_number", data.serial_number ?? "");
+    formData.append("purchase_date", data.purchase_date ?? "");
+    formData.append("category_id", String(data.category_id));
+    formData.append("status", data.status ?? "");
+    if (file) {
+      formData.append("image_url", file);
+    }
+    onSubmit(formData as unknown as AssetCreateInput | AssetUpdateInput);
+    console.log(formData);
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -26,12 +50,24 @@ export const AssetModal = ({ asset, onClose, onSubmit }: AssetModalProps) => {
         <h2 className="text-xl font-bold">
           {asset ? "Edit Asset" : "Add Asset"}
         </h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+        <form
+          onSubmit={handleSubmit(handleFormSubmit)}
+          className="flex flex-col gap-3"
+        >
           <Input
             label="Asset Name"
             {...register("asset_name", { required: "Asset name is required" })}
             error={errors.asset_name?.message}
           />
+          <div className="flex flex-col gap-2">
+            <label className="text(--text-primary) text-md">Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
+              className="input-field"
+            />
+          </div>
           <Input
             label="Serial Number"
             {...register("serial_number", {
@@ -42,6 +78,7 @@ export const AssetModal = ({ asset, onClose, onSubmit }: AssetModalProps) => {
           <Input
             label="Purchase Date"
             type="date"
+            max={new Date().toISOString().split("T")[0]}
             {...register("purchase_date", {
               required: "Purchase date is required",
             })}
@@ -50,9 +87,9 @@ export const AssetModal = ({ asset, onClose, onSubmit }: AssetModalProps) => {
           <DropDown
             label="Category"
             options={
-              departments?.map((dep) => ({
-                value: dep.id,
-                label: dep.department_name,
+              categories?.map((cat) => ({
+                value: cat.id,
+                label: cat.category_name,
               })) ?? []
             }
             error={errors.category_id?.message}

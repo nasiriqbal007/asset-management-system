@@ -12,12 +12,12 @@ import { Employee } from "./pages/Employee";
 import { Assets } from "./pages/Assets";
 import { Requests } from "./pages/Requests";
 import { Allocations } from "./pages/Allocations";
-import { Logs } from "./pages/Logs";
+import { ActivityLogs } from "./pages/ActivityLogs";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
 
-{path: "/login", element: <Login /> },
+  { path: "/login", element: <Login /> },
 
   { path: "/admin/signup", element: <SignUp /> },
   {
@@ -29,7 +29,7 @@ const router = createBrowserRouter([
       { path: "assets", element: <Assets /> },
       { path: "requests", element: <Requests /> },
       { path: "allocations", element: <Allocations /> },
-      { path: "logs", element: <Logs /> },
+      { path: "logs", element: <ActivityLogs /> },
     ],
   },
   { path: "/employee", element: <Employee /> },

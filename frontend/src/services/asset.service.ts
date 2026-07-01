@@ -1,9 +1,16 @@
 import api from "../api/api";
-import type { AssetCreateInput, AssetUpdateInput } from "../types/asset";
+import type {
+  AssetCreateInput,
+  AssetQueryParams,
+  AssetUpdateInput,
+} from "../types/asset";
 
-export const getAllAssetList = () => api.get("/assets");
+export const getAllAssetList = (params: AssetQueryParams) =>
+  api.get("assets", {
+    params,
+  });
 export const createNewAsset = (data: AssetCreateInput) =>
   api.post("/assets", data);
 export const updateCurrentAsset = (data: AssetUpdateInput) =>
-  api.patch(`assets/${data.id}`);
+  api.patch(`assets/${data.id}`, data);
 export const deleteAsset = (id: number) => api.delete(`assets/${id}`);

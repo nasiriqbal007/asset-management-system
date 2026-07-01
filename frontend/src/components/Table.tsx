@@ -7,6 +7,7 @@ type TableProps<T> = {
   actions?: {
     label: string;
     onClick: (row: T) => void;
+    show?: (row: T) => boolean;
   }[];
 };
 
@@ -44,15 +45,17 @@ export const Table = <T,>({ columns, data, actions }: TableProps<T>) => {
                 ))}
                 {actions && (
                   <td className="px-4 py-3 flex gap-2">
-                    {actions.map((action) => (
-                      <button
-                        key={action.label}
-                        onClick={() => action.onClick(row)}
-                        className="text-btn "
-                      >
-                        {action.label}
-                      </button>
-                    ))}
+                    {actions
+                      .filter((action) => !action.show || action.show(row))
+                      .map((action) => (
+                        <button
+                          key={action.label}
+                          onClick={() => action.onClick(row)}
+                          className="text-btn"
+                        >
+                          {action.label}
+                        </button>
+                      ))}
                   </td>
                 )}
               </tr>

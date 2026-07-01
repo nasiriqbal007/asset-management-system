@@ -14,8 +14,18 @@ export type Asset = {
 
 export type AssetCreateInput = Omit<
   Asset,
-  "id" | "created_at" | "category_name"
->;
+  "id" | "created_at" | "category_name" | "image_url"
+> & {
+  image: File;
+};
 export type AssetUpdateInput = Partial<AssetCreateInput> & {
   id: number;
+};
+export type AssetQueryParams = {
+  asset_name?: string;
+  category_id?: number;
+  status?: AssetStatus;
+  serial_number?: string;
+  page?: number;
+  limit?: number;
 };

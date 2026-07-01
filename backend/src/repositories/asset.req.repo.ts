@@ -38,7 +38,14 @@ export const getAssetReqById = async (
 export const getAllAssetReq = async (): Promise<AssetRequest[]> => {
   try {
     const reqs = await pool.query(
-      "SELECT * FROM asset_requests ORDER BY created_at DESC",
+      `SELECT 
+  asset_requests.*,
+  assets.asset_name,
+  employees.name AS employee_name
+FROM asset_requests
+LEFT JOIN assets ON asset_requests.asset_id = assets.id
+LEFT JOIN employees ON asset_requests.employee_id = employees.id
+ORDER BY asset_requests.created_at DESC`,
     );
     return reqs.rows;
   } catch (error) {

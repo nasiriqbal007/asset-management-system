@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import type { Asset, AssetCreateInput, AssetUpdateInput } from "../types/asset";
+import type {
+  Asset,
+  AssetCreateInput,
+  AssetQueryParams,
+  AssetUpdateInput,
+} from "../types/asset";
 import {
   createNewAsset,
   deleteAsset,
@@ -9,14 +14,31 @@ import {
 
 export const useAsset = () => {
   const [assets, setAssets] = useState<Asset[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchField, setSearchField] = useState<
+    "asset_name" | "serial_number" | "status" | "category_id"
+  >("asset_name");
+
+  const [debounceSearch, setDebouncedSearch] = useState(searchQuery);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+  console.log(searchField, searchQuery);
+
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const fetchAssets = async () => {
       setIsLoading(true);
       try {
-        const res = await getAllAssetList();
+        const res = await getAllAssetList({
+          [searchField]: debounceSearch,
+        } as AssetQueryParams);
         setAssets(res.data.payload.assets.data);
-        console.log("assets fetched ", res.data.payload);
+
+        console.log("assets fetched ", res.data.payload.assets.data);
       } catch (error) {
         console.error("Error fetching assets:", error);
       } finally {
@@ -24,7 +46,7 @@ export const useAsset = () => {
       }
     };
     fetchAssets();
-  }, []);
+  }, [debounceSearch, searchField]);
 
   const createAsset = async (data: AssetCreateInput) => {
     setIsLoading(true);
@@ -68,5 +90,15 @@ export const useAsset = () => {
     }
   };
 
-  return { assets, isLoading, createAsset, updateAsset, AssetDelete };
+  return {
+    assets,
+    isLoading,
+    createAsset,
+    updateAsset,
+    AssetDelete,
+    searchField,
+    setSearchField,
+    searchQuery,
+    setSearchQuery,
+  };
 };

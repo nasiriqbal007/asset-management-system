@@ -51,7 +51,13 @@ export const assetReturnDate = async (
 export const getAllAllocations = async (): Promise<AssetAllocation[]> => {
   try {
     const allocations = await pool.query(
-      "SELECT * FROM asset_allocations ORDER BY allocated_date DESC",
+      `
+SELECT asset_allocations.*, assets.asset_name, employees.name AS employee_name
+      FROM asset_allocations
+      JOIN assets ON asset_allocations.asset_id = assets.id
+      JOIN employees ON asset_allocations.employee_id = employees.id
+      ORDER BY allocated_date DESC
+      `,
     );
     return allocations.rows;
   } catch (error) {

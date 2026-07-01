@@ -48,7 +48,12 @@ body {
 .text-btn {
   @apply text-sm px-3 py-1 rounded-md border hover:bg-(--primary-hover) cursor-pointer transition-colors duration-300;
 }
-
+.danger-button {
+  @apply bg-(--status-danger-bg) text-sm px-3 py-1 rounded-md border hover:bg-(--status-danger-bg) cursor-pointer transition-colors duration-300;
+}
+.danger-button:hover {
+  @apply text-(--status-danger-text);
+}
 .error-message {
   @apply text-(--status-danger-text) text-sm mt-1;
 }
