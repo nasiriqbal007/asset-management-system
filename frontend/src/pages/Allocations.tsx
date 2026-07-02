@@ -1,3 +1,4 @@
+import { LoadingSpinner } from "../components/LoadingSpinner";
 import { Table } from "../components/Table";
 import { useAllocation } from "../hooks/useAllocation";
 
@@ -13,7 +14,9 @@ export const Allocations = () => {
   return (
     <div className="px-2 bg-(--bg-page)">
       {loading && (
-        <p className="flex items-center justify-center">Loading...</p>
+        <div className="flex items-center justify-center h-screen">
+          <LoadingSpinner />
+        </div>
       )}
 
       <Table columns={columns} data={allocations} />

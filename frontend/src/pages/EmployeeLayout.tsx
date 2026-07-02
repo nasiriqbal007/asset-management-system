@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useNavigate } from "react-router";
 import { useProfile } from "../hooks/useAuth";
 
-export const Employee = () => {
+export const EmployeeLayout = () => {
   const { profile } = useProfile();
   const navigate = useNavigate();
 
@@ -28,7 +28,7 @@ export const Employee = () => {
             }
             to="/employee/my-assets"
           >
-            Employees
+            My Assets
           </NavLink>
         </nav>
       </aside>

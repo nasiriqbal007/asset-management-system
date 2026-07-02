@@ -1,11 +1,11 @@
 import { Loader, Package } from "lucide-react";
-import { useEmployee } from "../hooks/employe";
-import { Input } from "../components/Input";
+
 import { useState } from "react";
 import { useProfile } from "../hooks/useAuth";
+import { useEmployeeAssets } from "../hooks/useEmployeeAssets";
 
 export const AvailableAssets = () => {
-  const { assets, isLoading, availAsset } = useEmployee();
+  const { assets, isLoading, availAsset } = useEmployeeAssets();
   const [reason, setReason] = useState("");
   const [selectedAssetId, setSelectedAssetId] = useState<number | null>(null);
 
@@ -17,7 +17,7 @@ export const AvailableAssets = () => {
       asset_id: assetId,
       request_reason: reason,
     };
-    console.log("Request Data:", requestData);
+
     availAsset(requestData);
   };
   console.log("Assets in AvailableAssets component:", profile?.id);
@@ -64,36 +64,48 @@ export const AvailableAssets = () => {
                 <span className="font-semibold  ">{asset.status}</span>
               </p>
 
-              <div className="flex justify-end mt-4 gap-2">
-                {selectedAssetId === asset.id ? (
-                  <div className="flex gap-2">
-                    <Input
-                      label="Reason"
-                      value={reason}
-                      onChange={(e) => setReason(e.target.value)}
-                    />
-                    <button
-                      className="primary-button"
-                      onClick={() => {
-                        handleRequestAsset(asset.id, reason);
-                        setSelectedAssetId(null);
-                        setReason("");
-                      }}
-                    >
-                      Request
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    className="primary-button"
-                    onClick={() => setSelectedAssetId(asset.id)}
-                  >
-                    Request Asset
-                  </button>
-                )}
+              <div className="flex justify-end mt-4">
+                <button
+                  className="primary-button"
+                  onClick={() => setSelectedAssetId(asset.id)}
+                >
+                  Request Asset
+                </button>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {selectedAssetId && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-(--bg-card) p-4 rounded border border-(--border) flex flex-col gap-3 w-80">
+            <input
+              type="text"
+              placeholder="Reason..."
+              value={reason}
+              className="input-field"
+              onChange={(e) => setReason(e.target.value)}
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                className="secondary-button "
+                onClick={() => setSelectedAssetId(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="primary-button mt-0!"
+                onClick={() => {
+                  handleRequestAsset(selectedAssetId, reason);
+                  setSelectedAssetId(null);
+                  setReason("");
+                }}
+              >
+                Request
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

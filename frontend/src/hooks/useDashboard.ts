@@ -7,6 +7,7 @@ import {
   getAvailableAssets,
 } from "../services/dashboard.service";
 import type { DashboardStats } from "../types/dashboard";
+import { handleError } from "../utils/handleError";
 
 const initialStats: DashboardStats = {
   totalEmployees: 0,
@@ -50,7 +51,7 @@ export const useDashboardStats = () => {
           availableRes.data.payload.Available,
         );
       } catch (error) {
-        console.error("Error fetching dashboard stats:", error);
+          handleError(error);
       } finally {
         setIsLoading(false);
       }

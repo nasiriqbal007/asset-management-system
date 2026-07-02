@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { LogEntry } from "../types/log";
 import { getActivityLogs } from "../services/activity.service";
+import { handleError } from "../utils/handleError";
 
 export const useActivity = () => {
   const [activityLogs, setLogs] = useState<LogEntry[]>([]);
@@ -12,7 +13,7 @@ export const useActivity = () => {
         const res = await getActivityLogs();
         setLogs(res.data.payload);
       } catch (error) {
-        console.log(error);
+        handleError(error);
       } finally {
         setLoading(false);
       }

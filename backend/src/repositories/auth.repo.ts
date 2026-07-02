@@ -5,7 +5,7 @@ import type { CreateUserInput } from "../types/user-types.js";
 export const createUser = async (createUser: CreateUserInput) => {
   try {
     const depId = await pool.query("SELECT id FROM departments WHERE id = $1", [
-      createUser.departmentId,
+      createUser.department_id,
     ]);
     if (depId.rowCount === 0) {
       throw AppError.NOT_FOUND;
@@ -15,7 +15,7 @@ export const createUser = async (createUser: CreateUserInput) => {
       [
         createUser.name,
         createUser.email,
-        createUser.departmentId,
+        createUser.department_id,
         createUser.password,
         createUser.role || "employee",
       ],

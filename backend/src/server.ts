@@ -31,6 +31,18 @@ app.use("/api/requests", assetReqRouter);
 app.use("/api/admin", adminDashboard);
 app.use("/api/allocations", allocationRouter);
 app.use("/api/activity-logs", logRouter);
+
+//router handler
+app.use((req: Request, res: Response) => {
+  res.status(404).json({
+    success: false,
+    error: {
+      statusCode: 404,
+      message: "Route not found",
+    },
+  });
+});
+
 //errorMiddleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   const statusCode = err instanceof AppError ? err.statusCode : 500;

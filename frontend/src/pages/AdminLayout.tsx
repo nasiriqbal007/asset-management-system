@@ -73,12 +73,12 @@ export const AdminLayout = () => {
         </nav>
       </aside>
 
-      <div className="flex flex-col flex-1 ">
-        <header className="h-16 border-(--border) border-b flex items-center justify-end px-6">
+      <div className="flex flex-col flex-1 overflow-hidden ">
+        <header className=" h-16 border-(--border) border-b flex items-center justify-end px-6 ">
           <span>Welcome, {profile?.name ?? "Loading..."}</span>
 
           <button
-            className="primary-button ml-4"
+            className="primary-button ml-4 mb-4"
             onClick={() => {
               if (window.confirm("Are you sure you want to logout?")) {
                 localStorage.removeItem("token");

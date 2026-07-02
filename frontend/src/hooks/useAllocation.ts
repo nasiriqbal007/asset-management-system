@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Allocation } from "../types/allocation";
 import { getAllAllocations, returnAsset } from "../services/allocation.service";
+import { handleError } from "../utils/handleError";
 
 export const useAllocation = () => {
   const [allocations, setAllocations] = useState<Allocation[]>([]);
@@ -11,9 +12,8 @@ export const useAllocation = () => {
       try {
         const res = await getAllAllocations();
         setAllocations(res.data.payload);
-        console.log("allocations fetched", res.data.payload);
       } catch (error) {
-        console.log(error);
+        handleError(error);
       } finally {
         setLoading(false);
       }
@@ -32,7 +32,7 @@ export const useAllocation = () => {
         ),
       );
     } catch (error) {
-      console.log(error);
+      handleError(error);
     } finally {
       setLoading(false);
     }

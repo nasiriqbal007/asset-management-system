@@ -7,7 +7,6 @@ export const SignUpService = (data: {
   email: string;
   password: string;
   role: "admin";
-  departmentId: number;
+  department_id: number;
 }) => api.post(`/auth/register`, data);
 export const Profile = () => api.get(`/auth/profile`);
-export const getAllDep = () => api.get(`/auth/departments`);

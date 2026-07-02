@@ -21,12 +21,12 @@ export const getAllEmpController = async (
   try {
     const page = req.query.page ? Number(req.query.page) : undefined;
     const limit = req.query.limit ? Number(req.query.limit) : undefined;
-    const departmentId = req.query.department_id
+    const department_id = req.query.department_id
       ? Number(req.query.department_id)
       : undefined;
     const searchEmp: QueryUser = {
-      name: req.query.body?.toString().trim(),
-      department_id: departmentId,
+      name: req.query.name?.toString().trim(),
+      department_id: department_id,
       page: page,
       limit: limit,
     } as QueryUser;

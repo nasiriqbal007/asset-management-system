@@ -3,6 +3,7 @@ import {
   assetReturnDate,
   createAllocation,
   getAllAllocations,
+  getEmployeeAllocations,
 } from "../repositories/asset.allocation.repo.js";
 import type {
   AssetAllocation,
@@ -24,7 +25,7 @@ export const returnAssetService = async (
   userId: number,
   id: number,
 ): Promise<AssetAllocation | null> => {
-  const updatedAllocation = await assetReturnDate(userId, id);
+  const updatedAllocation = await assetReturnDate(id, userId);
   if (!updatedAllocation) {
     throw AppError.NOT_FOUND;
   }
@@ -35,5 +36,12 @@ export const getAllAllocationsService = async (): Promise<
   AssetAllocation[]
 > => {
   const getAll = await getAllAllocations();
+  return getAll;
+};
+
+export const getEmployeeAllocationsService = async (
+  employeeId: number,
+): Promise<AssetAllocation[]> => {
+  const getAll = await getEmployeeAllocations(employeeId);
   return getAll;
 };

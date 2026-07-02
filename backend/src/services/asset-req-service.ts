@@ -80,7 +80,7 @@ export const rejectRequestService = async (reqId: number, userId: number) => {
 
   try {
     await client.query("BEGIN");
-    const req = await assetById(reqId);
+    const req = await getAssetReqById(reqId);
     if (!req) {
       throw AppError.NOT_FOUND;
     }
@@ -109,11 +109,20 @@ export const rejectRequestService = async (reqId: number, userId: number) => {
 export const approveRequestService = async (
   reqId: number,
   userId: number,
-  data: createAllocationInput,
+  data?: Partial<createAllocationInput>,
 ): Promise<AssetAllocation> => {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
+
+    const req = await getAssetReqById(reqId);
+    if (!req) {
+      throw AppError.NOT_FOUND;
+    }
+
+    if (req.status !== "pending") {
+      throw AppError.VALIDATION_ERROR;
+    }
 
     const updatedReq = await updateAssetReq(client, reqId, {
       status: "approved",
@@ -122,7 +131,10 @@ export const approveRequestService = async (
       throw AppError.NOT_FOUND;
     }
 
-    const allocation = await createAllocationService(userId, data);
+    const allocation = await createAllocationService(userId, {
+      asset_id: data?.asset_id || updatedReq.asset_id,
+      employee_id: data?.employee_id || updatedReq.employee_id,
+    });
     if (!allocation) {
       throw AppError.VALIDATION_ERROR;
     }

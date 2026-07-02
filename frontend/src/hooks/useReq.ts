@@ -6,6 +6,7 @@ import {
   rejectRequest,
 } from "../services/request.service";
 import type { AssetRequest } from "../types/request";
+import { handleError } from "../utils/handleError";
 
 export const useRequests = () => {
   const [requests, setRequests] = useState<AssetRequest[]>([]);
@@ -17,8 +18,8 @@ export const useRequests = () => {
       try {
         const res = await getAllRequests();
         setRequests(res.data.payload);
-      } catch {
-        console.error("Error fetching requests");
+      } catch (error) {
+        handleError(error);
       } finally {
         setIsLoading(false);
       }
@@ -32,10 +33,8 @@ export const useRequests = () => {
       setRequests((prevRequests) =>
         prevRequests.filter((request) => request.id !== id),
       );
-    } catch (error: any) {
-      console.log(error.response?.data);
-      console.log(error.response?.status);
-      console.error("Error rejecting request:", error);
+    } catch (error) {
+      handleError(error);
     }
   };
   const handleApproveRequest = async (id: number) => {
@@ -45,7 +44,7 @@ export const useRequests = () => {
         prevRequests.filter((request) => request.id !== id),
       );
     } catch (error) {
-      console.error("Error approving request:", error);
+      handleError(error);
     }
   };
   const fetchReqByStatus = async (status: string) => {
@@ -54,7 +53,7 @@ export const useRequests = () => {
       const res = await getReqByStatus(status);
       setRequests(res.data.payload);
     } catch (error) {
-      console.error("Error fetching requests by status:", error);
+      handleError(error);
     } finally {
       setIsLoading(false);
     }

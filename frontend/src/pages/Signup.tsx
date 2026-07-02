@@ -1,24 +1,20 @@
 import { type SubmitHandler } from "react-hook-form";
 import { Input } from "../components/Input";
 import { DropDown } from "../components/DropDown";
-import { useFetchAllDep, useSignUp } from "../hooks/useAuth";
+import { useDepartments } from "../hooks/useDepartment";
+import { useSignUp } from "../hooks/useAuth";
+import type { Department } from "../types/departments";
 
 type FormInput = {
   name: string;
   email: string;
   password: string;
   role: "admin";
-  departmentId: number;
-};
-
-type Department = {
-  id: number;
-
-  department_name: string;
+  department_id: number;
 };
 
 export const SignUp = () => {
-  const { departments } = useFetchAllDep();
+  const { departments } = useDepartments();
   console.log("Departments in SignUp component:", departments);
   const { register, handleSubmit, errors, onSignUp, isLoading } = useSignUp();
   const onSubmit: SubmitHandler<FormInput> = (data) => {
@@ -84,8 +80,8 @@ export const SignUp = () => {
                 label: dep.department_name,
               })) ?? []
             }
-            error={errors.departmentId?.message}
-            {...register("departmentId", {
+            error={errors.department_id?.message}
+            {...register("department_id", {
               required: "Department is required",
               valueAsNumber: true,
             })}

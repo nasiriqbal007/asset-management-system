@@ -9,9 +9,11 @@ import type {
 import {
   createNewAsset,
   deleteAsset,
+  exportAssetsCSV,
   getAllAssetList,
   updateCurrentAsset,
 } from "../services/asset.service";
+import { handleError } from "../utils/handleError";
 
 export const useAsset = () => {
   const [assets, setAssets] = useState<Asset[]>([]);
@@ -39,7 +41,7 @@ export const useAsset = () => {
         } as AssetQueryParams);
         setAssets(res.data.payload.assets.data);
       } catch (error) {
-        console.error("Error fetching assets:", error);
+        handleError(error);
       } finally {
         setIsLoading(false);
       }
@@ -53,7 +55,7 @@ export const useAsset = () => {
       const res = await createNewAsset(data);
       setAssets((prevAssets) => [...prevAssets, res.data.payload.data]);
     } catch (error) {
-      console.error("Error fetching assets:", error);
+      handleError(error);
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +71,7 @@ export const useAsset = () => {
         ),
       );
     } catch (error) {
-      console.error("Error fetching assets:", error);
+      handleError(error);
     } finally {
       setIsLoading(false);
     }
@@ -83,9 +85,26 @@ export const useAsset = () => {
         prevAssets.filter((a) => a.id !== res.data.payload.data.id),
       );
     } catch (error) {
-      console.error("Error fetching assets:", error);
+      handleError(error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const exportAssetsData = async () => {
+    try {
+      const res = await exportAssetsCSV();
+      const blob = new Blob([res.data], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "assets.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      handleError(error);
     }
   };
 
@@ -95,6 +114,7 @@ export const useAsset = () => {
     createAsset,
     updateAsset,
     AssetDelete,
+    exportAssetsData,
     searchText,
     setSearchText,
     status,

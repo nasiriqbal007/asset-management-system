@@ -8,14 +8,15 @@ import { SignUp } from "./pages/Signup";
 import { AdminLayout } from "./pages/AdminLayout";
 import { Dashboard } from "./pages/Dashboard";
 import { Employees } from "./pages/Employees";
-import { Employee } from "./pages/Employee";
+import { EmployeeLayout } from "./pages/EmployeeLayout";
 import { Assets } from "./pages/Assets";
 import { Requests } from "./pages/Requests";
 import { Allocations } from "./pages/Allocations";
 import { ActivityLogs } from "./pages/ActivityLogs";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { MyAssets } from "./pages/MyAssets";
-import { AvailableAssets } from "./pages/Available";
+import { AvailableAssets } from "./pages/AvailableAssets";
+import { Toaster } from "react-hot-toast";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -44,7 +45,7 @@ const router = createBrowserRouter([
     path: "/employee",
     element: (
       <ProtectedRoute role="employee">
-        <Employee />
+        <EmployeeLayout />
       </ProtectedRoute>
     ),
     children: [
@@ -58,6 +59,7 @@ const router = createBrowserRouter([
 ]);
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
+    <Toaster position="top-right" />
     <RouterProvider router={router}></RouterProvider>
   </StrictMode>,
 );

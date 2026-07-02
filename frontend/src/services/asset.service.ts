@@ -14,3 +14,4 @@ export const createNewAsset = (data: AssetCreateInput) =>
 export const updateCurrentAsset = (data: AssetUpdateInput) =>
   api.patch(`assets/${data.id}`, data);
 export const deleteAsset = (id: number) => api.delete(`assets/${id}`);
+export const exportAssetsCSV = () => api.get("assets/export");

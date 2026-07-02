@@ -6,7 +6,9 @@ import type {
   EmployeeUpdateInput,
 } from "../types/employee";
 import { DropDown } from "./DropDown";
-import { useFetchAllDep } from "../hooks/useAuth";
+
+import { useEffect } from "react";
+import { useDepartments } from "../hooks/useDepartment";
 
 type ModalProps = {
   employee?: Employee | null;
@@ -15,14 +17,20 @@ type ModalProps = {
 };
 
 export const EmployeeModal = ({ employee, onClose, onSubmit }: ModalProps) => {
+  const { departments } = useDepartments();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<EmployeeCreateInput>({
-    defaultValues: employee ?? {},
-  });
-  const { departments } = useFetchAllDep();
+    reset,
+  } = useForm<EmployeeCreateInput | EmployeeUpdateInput>();
+  useEffect(() => {
+    reset({
+      ...employee,
+      department_id: Number(employee?.department_id),
+    });
+  }, [departments, employee, reset]);
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-(--bg-card) p-6 rounded-lg w-full max-w-md flex flex-col gap-4">
@@ -45,13 +53,14 @@ export const EmployeeModal = ({ employee, onClose, onSubmit }: ModalProps) => {
             label="Department"
             options={
               departments?.map((dep) => ({
-                value: dep.id,
+                value: Number(dep.id),
                 label: dep.department_name,
               })) ?? []
             }
-            error={errors.departmentId?.message}
-            {...register("departmentId", {
+            error={errors.department_id?.message}
+            {...register("department_id", {
               required: "Department is required",
+
               valueAsNumber: true,
             })}
           />

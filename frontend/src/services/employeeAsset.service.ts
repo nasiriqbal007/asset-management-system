@@ -7,3 +7,5 @@ export const returnAsset = (id: number) =>
 export const getAllAssetForEmp = () => api.get("/assets");
 export const reqForAsset = (data: CreateAssetRequestInput) =>
   api.post(`/requests`, data);
+
+export const getMyAllocations = () => api.get("/allocations/my-allocations");

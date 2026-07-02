@@ -1,9 +1,9 @@
 import { Loader } from "lucide-react";
-import { useEmployee } from "../hooks/employe";
+import { useEmployeeAssets } from "../hooks/useEmployeeAssets";
 import { useProfile } from "../hooks/useAuth";
 
 export const MyAssets = () => {
-  const { allocatedAssets, isLoading, handleReturnAsset } = useEmployee();
+  const { allocatedAssets, isLoading, handleReturnAsset } = useEmployeeAssets();
   const { profile } = useProfile();
   const myAssets = allocatedAssets.filter(
     (asset) => asset.employee_id === Number(profile?.id),

@@ -67,6 +67,27 @@ SELECT asset_allocations.*, assets.asset_name, employees.name AS employee_name
   }
 };
 
+export const getEmployeeAllocations = async (
+  employeeId: number,
+): Promise<AssetAllocation[]> => {
+  try {
+    const allocations = await pool.query(
+      `
+SELECT asset_allocations.*, assets.asset_name, employees.name AS employee_name
+      FROM asset_allocations
+      JOIN assets ON asset_allocations.asset_id = assets.id
+      JOIN employees ON asset_allocations.employee_id = employees.id
+      WHERE asset_allocations.employee_id = $1 AND asset_allocations.returned_date IS NULL
+      ORDER BY allocated_date DESC
+      `,
+      [employeeId],
+    );
+    return allocations.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const checkAvailability = async (assetId: number): Promise<boolean> => {
   try {
     const res = await pool.query(

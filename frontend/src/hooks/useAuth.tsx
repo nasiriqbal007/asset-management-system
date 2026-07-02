@@ -1,12 +1,8 @@
 import { useForm } from "react-hook-form";
-import {
-  getAllDep,
-  LoginService,
-  Profile,
-  SignUpService,
-} from "../services/auth.service";
+import { LoginService, Profile, SignUpService } from "../services/auth.service";
 import { useEffect, useState } from "react";
 import type { User } from "../types/user";
+import { handleError } from "../utils/handleError";
 
 type LoginInput = { email: string; password: string };
 type SignUpInput = {
@@ -14,7 +10,7 @@ type SignUpInput = {
   email: string;
   password: string;
   role: "admin";
-  departmentId: number;
+  department_id: number;
 };
 
 export const useLogin = () => {
@@ -32,8 +28,7 @@ export const useLogin = () => {
 
       return res.data.payload;
     } catch (error) {
-      console.error("Login error:", error);
-      throw error;
+      handleError(error);
     } finally {
       setIsLoading(false);
     }
@@ -54,7 +49,7 @@ export const useSignUp = () => {
       const res = await SignUpService(data);
       return res.data;
     } catch (error) {
-      console.error("SignUp error:", error);
+      handleError(error);
     } finally {
       setIsLoading(false);
     }
@@ -71,7 +66,7 @@ export const useProfile = () => {
         const res = await Profile();
         return setProfile(res.data.payload);
       } catch (error) {
-        console.error("Profile error:", error);
+        handleError(error);
       }
     };
 
@@ -79,23 +74,4 @@ export const useProfile = () => {
   }, []);
 
   return { profile };
-};
-export const useFetchAllDep = () => {
-  const [departments, setDepartments] = useState<
-    { id: number; department_name: string }[]
-  >([]);
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const res = await getAllDep();
-
-        setDepartments(res.data.payload);
-      } catch (error) {
-        console.error("Get Departments error:", error);
-      }
-    };
-    fetch();
-  }, []);
-
-  return { departments };
 };

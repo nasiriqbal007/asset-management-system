@@ -11,6 +11,7 @@ import fs from "fs";
 import AppResponse from "../Response/app-response.js";
 import AppError from "../Error/app-error.js";
 import type { AssetQuery } from "../types/asset-type.js";
+import type { jwtPayload } from "../types/user-types.js";
 
 export const getAllAssetsController = async (
   req: Request,
@@ -55,7 +56,7 @@ export const getAssetByIdController = async (
 };
 
 export const createAssetController = async (
-  req: Request,
+  req: Request & { user?: jwtPayload },
   res: Response,
   next: NextFunction,
 ) => {
@@ -63,7 +64,7 @@ export const createAssetController = async (
     if (!req.file) {
       throw AppError.IMAGE_REQ;
     }
-    const userId = Number(req.params.userId);
+    const userId = Number(req.user?.userId);
     const newAsset = await AddAsset(userId, {
       ...req.body,
       image_url: req.file?.path,
@@ -79,12 +80,12 @@ export const createAssetController = async (
   }
 };
 export const updateAssetController = async (
-  req: Request,
+  req: Request & { user?: jwtPayload },
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const userId = Number(req.params.userId);
+    const userId = Number(req.user?.userId);
     const assetId = Number(req.params.id);
     const updateData = { ...req.body };
     if (req.file) {
@@ -105,13 +106,13 @@ export const updateAssetController = async (
 };
 
 export const deleteAssetController = async (
-  req: Request,
+  req: Request & { user?: jwtPayload },
   res: Response,
   next: NextFunction,
 ) => {
   try {
     const assetId = Number(req.params.id);
-    const userId = Number(req.params.userId);
+    const userId = Number(req.user?.userId);
 
     const deleteAsset = await deleteAssetId(assetId, userId);
     AppResponse.DELETED_ITEM.send(res, deleteAsset);

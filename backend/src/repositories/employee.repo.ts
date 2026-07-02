@@ -83,7 +83,7 @@ export const updateEmployee = async (
     const result = await pool.query(
       "UPDATE employees SET name=$1, department_id=$2, email=$3 WHERE id=$4 RETURNING *",
 
-      [data.name, data.departmentId, data.email, empId],
+      [data.name, data.department_id, data.email, empId],
     );
     return result.rows[0];
   } catch (err) {

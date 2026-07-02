@@ -10,7 +10,7 @@ export type User = {
 export type CreateUserInput = {
   name: string;
   email: string;
-  departmentId: number;
+  department_id: number;
   password: string;
   role?: "employee" | "admin";
 };
@@ -28,7 +28,7 @@ export type jwtPayload = {
 export type UpdateEmpType = {
   name: string;
   email: string;
-  departmentId: number;
+  department_id: number;
 };
 
 export type QueryUser = {

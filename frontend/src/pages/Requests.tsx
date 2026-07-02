@@ -2,6 +2,7 @@ import type { ChangeEvent } from "react";
 import { Table } from "../components/Table";
 import { useRequests } from "../hooks/useReq";
 import type { AssetRequest } from "../types/request";
+import { LoadingSpinner } from "../components/LoadingSpinner";
 
 export const Requests = () => {
   const {
@@ -56,10 +57,7 @@ export const Requests = () => {
         <option value="rejected">Rejected</option>
       </select>
 
-      {isLoading && (
-        <p className="flex items-center justify-center">Loading...</p>
-      )}
-
+      {isLoading && <LoadingSpinner />}
       <Table columns={columns} data={requests} actions={actions} />
     </div>
   );
