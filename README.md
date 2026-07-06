@@ -18,7 +18,24 @@ TechStack : Typescript, Node, PostgresSQL, Express
 2. Install dependencies: `npm install`
 3. Create `.env` file
 4. Add environment variables
-5. Run database schema setup
+5. Run database schema setup using [schema.sql](file:///e:/asset-management-system/backend/src/db/schema.sql)
 6. Start server: `npm run dev`
 
 Server runs on `http://localhost:3000`
+
+# Frontend
+
+TechStack : React, Typescript, Vite, TailwindCSS
+
+# Prerequisites
+
+- Node.js LTS version
+- Vite
+
+# Setup Instructions
+
+1. Navigate to frontend directory: `cd frontend`
+2. Install dependencies: `npm install`
+3. Start frontend dev server: `npm run dev`
+
+Client runs on `http://localhost:5173`
