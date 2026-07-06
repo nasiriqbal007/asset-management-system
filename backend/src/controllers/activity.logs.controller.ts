@@ -7,7 +7,9 @@ export const getActivityController = async (
   next: NextFunction,
 ) => {
   try {
-    const activities = await getAllActivityService();
+    const page = req.query.page ? Number(req.query.page) : undefined;
+    const limit = req.query.limit ? Number(req.query.limit) : undefined;
+    const activities = await getAllActivityService({ page, limit });
     AppResponse.ACTIVITY_LOGS.send(res, activities);
   } catch (error) {
     next(error);

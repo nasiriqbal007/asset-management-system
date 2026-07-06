@@ -27,15 +27,17 @@ export const returnAssetService = async (
 ): Promise<AssetAllocation | null> => {
   const updatedAllocation = await assetReturnDate(id, userId);
   if (!updatedAllocation) {
-    throw AppError.NOT_FOUND;
+    throw AppError.ALLOCATION_NOT_FOUND;
   }
   return updatedAllocation;
 };
 
-export const getAllAllocationsService = async (): Promise<
-  AssetAllocation[]
-> => {
-  const getAll = await getAllAllocations();
+import type { PaginatedResult } from "../types/pagination.js";
+
+export const getAllAllocationsService = async (
+  query: { page?: number; limit?: number } = {},
+): Promise<PaginatedResult<AssetAllocation>> => {
+  const getAll = await getAllAllocations(query);
   return getAll;
 };
 

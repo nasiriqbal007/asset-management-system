@@ -50,18 +50,41 @@ export const assetReturnDate = async (
   );
 };
 
-export const getAllAllocations = async (): Promise<AssetAllocation[]> => {
+import type { PaginatedResult } from "../types/pagination.js";
+
+export const getAllAllocations = async (
+  query: { page?: number; limit?: number } = {},
+): Promise<PaginatedResult<AssetAllocation>> => {
   try {
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+    const offset = (page - 1) * limit;
+
     const allocations = await pool.query(
       `
-SELECT asset_allocations.*, assets.asset_name, employees.name AS employee_name
+SELECT asset_allocations.*, assets.asset_name, employees.name AS employee_name, COUNT(*) OVER() as total
       FROM asset_allocations
       JOIN assets ON asset_allocations.asset_id = assets.id
       JOIN employees ON asset_allocations.employee_id = employees.id
       ORDER BY allocated_date DESC
+      LIMIT $1 OFFSET $2
       `,
+      [limit, offset],
     );
-    return allocations.rows;
+
+    const total = allocations.rows.length > 0 ? Number(allocations.rows[0].total) : 0;
+    const totalPages = Math.ceil(total / limit);
+    const data = allocations.rows.map(({ total, ...alloc }) => alloc as AssetAllocation);
+
+    return {
+      data,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages,
+      },
+    };
   } catch (error) {
     throw error;
   }

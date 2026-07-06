@@ -8,6 +8,8 @@ import {
   getEmpByIdController,
   updateEmpController,
 } from "../controllers/emp.controller.js";
+import { validateBody } from "../middleware/validation-middleware.js";
+import { RegisterSchema, updateSchema } from "../validator/user.validator.js";
 
 export const empRouter = Router();
 
@@ -28,12 +30,14 @@ empRouter.post(
   "/",
   authMiddleware,
   requireRole(["admin"]),
+  validateBody(RegisterSchema),
   createEmpController,
 );
 empRouter.patch(
   "/:id",
   authMiddleware,
   requireRole(["admin"]),
+  validateBody(updateSchema),
   updateEmpController,
 );
 empRouter.delete(

@@ -29,7 +29,7 @@ export const createUser = async (createUser: CreateUserInput) => {
 export const getUserByEmail = async (email: string) => {
   try {
     const result = await pool.query(
-      "SELECT id, name, email, department_id, password, role FROM employees WHERE email = $1",
+      "SELECT id, name, email, department_id, password, role FROM employees WHERE email = $1 AND deleted_at IS NULL",
       [email],
     );
     return result.rows[0];

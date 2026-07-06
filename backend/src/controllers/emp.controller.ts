@@ -43,6 +43,9 @@ export const getEmpByIdController = async (
 ) => {
   try {
     const empId = Number(req.params.id);
+    if (!empId || Number.isNaN(empId)) {
+      throw AppError.INVALID_ID;
+    }
 
     const getEmp = await getEmpById(empId);
     AppResponse.PROFILE_RETRIEVED.send(res, getEmp);
@@ -74,6 +77,9 @@ export const deleteEmpController = async (
 ) => {
   try {
     const empId = Number(req.params.id);
+    if (!empId || Number.isNaN(empId)) {
+      throw AppError.INVALID_ID;
+    }
     const deletedEmp = await deleteEmp(empId);
     AppResponse.DELETED_USER.send(res, deletedEmp);
   } catch (error) {
@@ -87,6 +93,9 @@ export const updateEmpController = async (
 ) => {
   try {
     const empId = Number(req.params.id);
+    if (!empId || Number.isNaN(empId)) {
+      throw AppError.INVALID_ID;
+    }
     const updatedEmp = await updateEmp(empId, req.body);
     AppResponse.PROFILE_UPDATED.send(res, updatedEmp);
   } catch (error) {

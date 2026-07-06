@@ -52,25 +52,30 @@ export const getAssetReqByIdService = async (
 ): Promise<AssetRequest | undefined> => {
   const req = await getAssetReqById(reqId);
   if (!req?.id) {
-    throw AppError.NOT_FOUND;
+    throw AppError.REQUEST_NOT_FOUND;
   }
   return req;
 };
-export const getAllAssetReqService = async (): Promise<AssetRequest[]> => {
-  const reqs = await getAllAssetReq();
-  if (reqs.length === 0 || !reqs) {
-    throw AppError.NOT_FOUND;
+import type { PaginatedResult } from "../types/pagination.js";
+
+export const getAllAssetReqService = async (
+  query: { page?: number; limit?: number } = {},
+): Promise<PaginatedResult<AssetRequest>> => {
+  const reqs = await getAllAssetReq(query);
+  if (!reqs || reqs.data.length === 0) {
+    throw AppError.REQUEST_NOT_FOUND;
   }
   return reqs;
 };
 
 export const getAssetReqByStatusService = async (
   status: ReqStatus,
-): Promise<AssetRequest[]> => {
-  const reqStatus = await getRequestsByStatus(status);
+  query: { page?: number; limit?: number } = {},
+): Promise<PaginatedResult<AssetRequest>> => {
+  const reqStatus = await getRequestsByStatus(status, query);
 
-  if (reqStatus.length === 0 || !reqStatus) {
-    throw AppError.NOT_FOUND;
+  if (!reqStatus || reqStatus.data.length === 0) {
+    throw AppError.REQUEST_NOT_FOUND;
   }
   return reqStatus;
 };
@@ -82,7 +87,7 @@ export const rejectRequestService = async (reqId: number, userId: number) => {
     await client.query("BEGIN");
     const req = await getAssetReqById(reqId);
     if (!req) {
-      throw AppError.NOT_FOUND;
+      throw AppError.REQUEST_NOT_FOUND;
     }
 
     if (req.status !== "pending") {
@@ -117,7 +122,7 @@ export const approveRequestService = async (
 
     const req = await getAssetReqById(reqId);
     if (!req) {
-      throw AppError.NOT_FOUND;
+      throw AppError.REQUEST_NOT_FOUND;
     }
 
     if (req.status !== "pending") {
@@ -128,7 +133,7 @@ export const approveRequestService = async (
       status: "approved",
     });
     if (!updatedReq) {
-      throw AppError.NOT_FOUND;
+      throw AppError.REQUEST_NOT_FOUND;
     }
 
     const allocation = await createAllocationService(userId, {

@@ -43,6 +43,10 @@ class AppResponse {
     "Retrieved all assets successfully",
     200,
   );
+  static GET_ALL_ALLOCATIONS = new AppResponse(
+    "Retrieved all allocations successfully",
+    200,
+  );
   static ACTIVITY_LOGS = new AppResponse("All activity logs fetched", 200);
   static GET_ALL_REQ = new AppResponse("Retrieved all data successfully", 200);
   static ITEM_CREATED = new AppResponse("Item created successfully", 201);

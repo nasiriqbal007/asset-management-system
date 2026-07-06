@@ -1,11 +1,13 @@
-import { Loader, Package } from "lucide-react";
+import { Loader } from "lucide-react";
 
 import { useState } from "react";
 import { useProfile } from "../hooks/useAuth";
 import { useEmployeeAssets } from "../hooks/useEmployeeAssets";
+import { AssetCard } from "../components/AssetCard";
+import { Pagination } from "../components/Pagination";
 
 export const AvailableAssets = () => {
-  const { assets, isLoading, availAsset } = useEmployeeAssets();
+  const { assets, isLoading, availAsset, setPage } = useEmployeeAssets();
   const [reason, setReason] = useState("");
   const [selectedAssetId, setSelectedAssetId] = useState<number | null>(null);
 
@@ -22,60 +24,41 @@ export const AvailableAssets = () => {
   };
   console.log("Assets in AvailableAssets component:", profile?.id);
   return (
-    <div className="px-2 py-2 bg-(--bg-page)">
+    <div className="px-2 pt-6 pb-0 bg-(--bg-page) flex flex-col h-[calc(100vh-64px)] overflow-hidden">
       {isLoading ? (
-        <Loader className="flex items-center justify-center " size={30} />
+        <div className="flex flex-1 items-center justify-center">
+          <Loader size={30} className="animate-spin" />
+        </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {assets.map((asset) => (
-            <div
-              key={asset.id}
-              className="bg-(--bg-card) p-4 rounded-lg shadow-md"
-            >
-              {asset.image_url ? (
-                <img
-                  src={asset.image_url}
-                  alt={asset.asset_name}
-                  className="w-full h-48 object-cover rounded-md mb-4"
-                />
-              ) : (
-                <div className="w-full h-48 bg-(--bg-page) flex items-center justify-center rounded-md mb-4">
-                  <Package size={32} className="text-(--text-secondary)" />
-                </div>
-              )}
-              <h3 className="text-lg font-semibold">{asset.asset_name}</h3>
-
-              <p className="text-sm text-(--text-secondary)">
-                <span className="font-light ">Serial Number: </span>
-                <span className="font-semibold  ">{asset.serial_number}</span>
-              </p>
-              <p className="text-sm text-(--text-secondary)">
-                <span className="font-light ">Category: </span>
-                <span className="font-semibold  ">{asset.category_name}</span>
-              </p>
-              <p className="text-sm text-(--text-secondary)">
-                <span className="font-light ">Purchase Date: </span>
-                <span className="font-semibold  ">
-                  {new Date(asset.purchase_date).toLocaleDateString()}
-                </span>
-              </p>
-              <p className="text-sm text-(--text-secondary)">
-                <span className="font-light ">Status: </span>
-                <span className="font-semibold  ">{asset.status}</span>
-              </p>
-
-              <div className="flex justify-end mt-4">
-                <button
-                  className="primary-button"
-                  onClick={() => setSelectedAssetId(asset.id)}
-                >
-                  Request Asset
-                </button>
-              </div>
-            </div>
-          ))}
+        <div className="flex-1 overflow-y-auto min-h-0 pr-1 pb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {assets.data.map((asset) => (
+              <AssetCard
+                key={asset.id}
+                asset={asset}
+                actions={
+                  <div className="flex justify-end mt-4">
+                    <button
+                      className="primary-button"
+                      onClick={() => setSelectedAssetId(asset.id)}
+                    >
+                      Request Asset
+                    </button>
+                  </div>
+                }
+              />
+            ))}
+          </div>
         </div>
       )}
+
+      <div className="shrink-0 -mx-2 mt-4">
+        <Pagination
+          pagination={assets.pagination}
+          onPageChange={setPage}
+          className="border-t bg-(--bg-card)"
+        />
+      </div>
 
       {selectedAssetId && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
@@ -87,9 +70,9 @@ export const AvailableAssets = () => {
               className="input-field"
               onChange={(e) => setReason(e.target.value)}
             />
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-2 mt-4">
               <button
-                className="secondary-button "
+                className="secondary-button mt-0!"
                 onClick={() => setSelectedAssetId(null)}
               >
                 Cancel

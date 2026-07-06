@@ -3,7 +3,7 @@ import { Table } from "../components/Table";
 import { useActivity } from "../hooks/useActivity";
 
 export const ActivityLogs = () => {
-  const { loading, activityLogs } = useActivity();
+  const { loading, activityLogs, setPage } = useActivity();
   const columns = [
     { key: "id", label: "ID" },
     { key: "user_id", label: "User ID" },
@@ -14,14 +14,19 @@ export const ActivityLogs = () => {
     { key: "created_at", label: "Created At" },
   ];
   return (
-    <div className="px-2 bg-(--bg-page)">
+    <div className="px-2 pt-6 bg-(--bg-page)">
       {loading && (
         <div className="flex items-center justify-center h-screen">
           <LoadingSpinner />
         </div>
       )}
 
-      <Table columns={columns} data={activityLogs} />
+      <Table
+        columns={columns}
+        data={activityLogs.data}
+        pagination={activityLogs.pagination}
+        onPageChange={setPage}
+      />
     </div>
   );
 };

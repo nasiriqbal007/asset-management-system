@@ -5,7 +5,7 @@ import type { QueryUser, UpdateEmpType, User } from "../types/user-types.js";
 export const deleteEmployee = async (empId: number) => {
   try {
     const result = await pool.query(
-      "DELETE FROM employees WHERE id=$1 RETURNING *",
+      "UPDATE employees SET deleted_at = NOW() WHERE id=$1 RETURNING *",
       [empId],
     );
     return result.rows[0] || null;
@@ -20,7 +20,7 @@ export const getAllEmployees = async (
     const page = query.page ?? 1;
     const limit = query.limit ?? 10;
     const offset = (page - 1) * limit;
-    const conditions: string[] = ["role = 'employee'"];
+    const conditions: string[] = ["role = 'employee'", "e.deleted_at IS NULL"];
     const values: unknown[] = [];
     let i = 1;
     if (query.name) {
@@ -67,7 +67,7 @@ export const getEmployeeById = async (
 ): Promise<User | undefined> => {
   try {
     const result = await pool.query(
-      "SELECT id, name, email, department_id, role FROM employees WHERE id = $1",
+      "SELECT id, name, email, department_id, role FROM employees WHERE id = $1 AND deleted_at IS NULL",
       [empId],
     );
     return result.rows[0];
@@ -95,7 +95,7 @@ export const getAllEmployeesForExport = async (): Promise<User[]> => {
     `SELECT e.id, e.name, e.department_id, d.department_name as department
      FROM employees e 
      LEFT JOIN departments d ON e.department_id = d.id 
-     WHERE role = 'employee'`,
+     WHERE role = 'employee' AND e.deleted_at IS NULL`,
   );
   return result.rows;
 };

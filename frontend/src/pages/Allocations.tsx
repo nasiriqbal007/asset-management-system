@@ -3,7 +3,7 @@ import { Table } from "../components/Table";
 import { useAllocation } from "../hooks/useAllocation";
 
 export const Allocations = () => {
-  const { loading, allocations } = useAllocation();
+  const { loading, allocations, setPage } = useAllocation();
   const columns = [
     { key: "id", label: "ID" },
     { key: "asset_name", label: "Asset Name" },
@@ -12,14 +12,19 @@ export const Allocations = () => {
     { key: "returned_date", label: "Return Date" },
   ];
   return (
-    <div className="px-2 bg-(--bg-page)">
+    <div className="px-2 pt-6 bg-(--bg-page)">
       {loading && (
         <div className="flex items-center justify-center h-screen">
           <LoadingSpinner />
         </div>
       )}
 
-      <Table columns={columns} data={allocations} />
+      <Table
+        columns={columns}
+        data={allocations.data}
+        pagination={allocations.pagination}
+        onPageChange={setPage}
+      />
     </div>
   );
 };

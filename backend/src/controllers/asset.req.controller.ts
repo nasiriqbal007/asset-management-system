@@ -18,8 +18,10 @@ export const getAllReqController = async (
   next: NextFunction,
 ) => {
   try {
-    const reqs = await getAllAssetReqService();
-    AppResponse.GET_ALL_Assets.send(res, reqs);
+    const page = req.query.page ? Number(req.query.page) : undefined;
+    const limit = req.query.limit ? Number(req.query.limit) : undefined;
+    const reqs = await getAllAssetReqService({ page, limit });
+    AppResponse.GET_ALL_REQ.send(res, reqs);
   } catch (error) {
     next(error);
   }
@@ -34,12 +36,14 @@ export const getReqByStatusController = async (
     const status = req.params.status as ReqStatus;
 
     if (!status) {
-      throw AppError.NOT_FOUND;
+      throw AppError.VALIDATION_ERROR;
     }
 
-    const reqStatus = await getAssetReqByStatusService(status);
+    const page = req.query.page ? Number(req.query.page) : undefined;
+    const limit = req.query.limit ? Number(req.query.limit) : undefined;
+    const reqStatus = await getAssetReqByStatusService(status, { page, limit });
 
-    AppResponse.GET_ALL_Assets.send(res, reqStatus);
+    AppResponse.GET_ALL_REQ.send(res, reqStatus);
   } catch (error) {
     next(error);
   }
@@ -51,6 +55,9 @@ export const getReqByIdController = async (
 ) => {
   try {
     const reqId = Number(req.params.id);
+    if (!reqId || Number.isNaN(reqId)) {
+      throw AppError.INVALID_ID;
+    }
     const reqData = await getAssetReqByIdService(reqId);
 
     AppResponse.Item_BY_ID.send(res, reqData);
@@ -68,7 +75,7 @@ export const ApproveReqController = async (
   try {
     const reqId = Number(req.params.id);
     if (!reqId || Number.isNaN(reqId)) {
-      throw AppError.NOT_FOUND;
+      throw AppError.INVALID_ID;
     }
 
     const userId = Number(req.user?.userId);
@@ -103,7 +110,7 @@ export const rejectReqController = async (
   try {
     const reqId = Number(req.params.id);
     if (!reqId || Number.isNaN(reqId)) {
-      throw AppError.NOT_FOUND;
+      throw AppError.INVALID_ID;
     }
 
     const userId = Number(req.user?.userId);
@@ -130,8 +137,8 @@ export const approveReqController = async (
     if (!userId) {
       throw AppError.UNAUTHORIZED;
     }
-    if (!reqId) {
-      throw AppError.NOT_FOUND;
+    if (!reqId || Number.isNaN(reqId)) {
+      throw AppError.INVALID_ID;
     }
 
     const allocation = await approveRequestService(

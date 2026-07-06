@@ -8,11 +8,21 @@ import {
 } from "../services/employeeAsset.service";
 import type { CreateAssetRequestInput } from "../types/request";
 import type { Allocation } from "../types/allocation";
+import type { PaginatedResponse } from "../types/pagination";
 
 import { handleError } from "../utils/handleError";
 
 export const useEmployeeAssets = () => {
-  const [assets, setAssets] = useState<Asset[]>([]);
+  const [assets, setAssets] = useState<PaginatedResponse<Asset>>({
+    data: [],
+    pagination: {
+      page: 1,
+      totalPages: 1,
+      limit: 10,
+      total: 0,
+    },
+  });
+  const [page, setPage] = useState<number>(1);
   const [allocatedAssets, setAllocatedAssets] = useState<Allocation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -20,8 +30,11 @@ export const useEmployeeAssets = () => {
     const fetchAssets = async () => {
       setIsLoading(true);
       try {
-        const res = await getAllAssetForEmp();
-        setAssets(res.data.payload.assets.data);
+        const res = await getAllAssetForEmp({
+          page,
+          limit: assets.pagination.limit,
+        });
+        setAssets(res.data.payload.assets);
       } catch (error) {
         handleError(error);
       } finally {
@@ -29,7 +42,8 @@ export const useEmployeeAssets = () => {
       }
     };
     fetchAssets();
-  }, []);
+  }, [page]);
+
   useEffect(() => {
     const fetchAllocatedAssets = async () => {
       setIsLoading(true);
@@ -45,6 +59,7 @@ export const useEmployeeAssets = () => {
     };
     fetchAllocatedAssets();
   }, []);
+
   const handleReturnAsset = async (id: number) => {
     try {
       await returnAsset(id);
@@ -57,6 +72,7 @@ export const useEmployeeAssets = () => {
       setIsLoading(false);
     }
   };
+
   const availAsset = async (data: CreateAssetRequestInput) => {
     setIsLoading(true);
     try {
@@ -67,5 +83,14 @@ export const useEmployeeAssets = () => {
       setIsLoading(false);
     }
   };
-  return { assets, isLoading, handleReturnAsset, availAsset, allocatedAssets };
+
+  return {
+    assets,
+    isLoading,
+    handleReturnAsset,
+    availAsset,
+    allocatedAssets,
+    page,
+    setPage,
+  };
 };

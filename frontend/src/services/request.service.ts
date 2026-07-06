@@ -1,7 +1,9 @@
 import api from "../api/api";
+import type { Pagination } from "../types/pagination";
 import type { CreateAssetRequestInput } from "../types/request";
 
-export const getAllRequests = () => api.get("/requests");
+export const getAllRequests = (params?: Partial<Pagination>) =>
+  api.get("/requests", { params });
 
 export const createRequest = (data: CreateAssetRequestInput) =>
   api.post("/requests", data);
@@ -11,5 +13,5 @@ export const approveRequest = (id: number) =>
 
 export const rejectRequest = (id: number) =>
   api.patch(`/requests/${id}/reject`);
-export const getReqByStatus = (status: string) =>
-  api.get(`/requests/status/${status}`);
+export const getReqByStatus = (status: string, params?: Partial<Pagination>) =>
+  api.get(`/requests/status/${status}`, { params });

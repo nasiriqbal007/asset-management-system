@@ -14,9 +14,19 @@ import {
   updateCurrentAsset,
 } from "../services/asset.service";
 import { handleError } from "../utils/handleError";
+import type { PaginatedResponse } from "../types/pagination";
 
 export const useAsset = () => {
-  const [assets, setAssets] = useState<Asset[]>([]);
+  const [assets, setAssets] = useState<PaginatedResponse<Asset>>({
+    data: [],
+    pagination: {
+      page: 1,
+      totalPages: 1,
+      limit: 10,
+      total: 0,
+    },
+  });
+  const [page, setPage] = useState<number>(1);
   const [searchText, setSearchText] = useState("");
   const [status, setStatus] = useState<AssetStatus | "">("");
   const [categoryId, setCategoryId] = useState<number | "">("");
@@ -38,8 +48,10 @@ export const useAsset = () => {
           asset_name: debouncedSearchText || undefined,
           status: status || undefined,
           category_id: categoryId === "" ? undefined : categoryId,
+          page,
+          limit: assets.pagination.limit,
         } as AssetQueryParams);
-        setAssets(res.data.payload.assets.data);
+        setAssets(res.data.payload.assets);
       } catch (error) {
         handleError(error);
       } finally {
@@ -47,13 +59,16 @@ export const useAsset = () => {
       }
     };
     fetchAssets();
-  }, [debouncedSearchText, status, categoryId]);
+  }, [debouncedSearchText, status, categoryId, page, assets.pagination.limit]);
 
   const createAsset = async (data: AssetCreateInput) => {
     setIsLoading(true);
     try {
       const res = await createNewAsset(data);
-      setAssets((prevAssets) => [...prevAssets, res.data.payload.data]);
+      setAssets((prev) => ({
+        ...prev,
+        data: [...prev.data, res.data.payload.data],
+      }));
     } catch (error) {
       handleError(error);
     } finally {
@@ -65,11 +80,12 @@ export const useAsset = () => {
     setIsLoading(true);
     try {
       const res = await updateCurrentAsset(data);
-      setAssets((prevAssets) =>
-        prevAssets.map((a) =>
+      setAssets((prev) => ({
+        ...prev,
+        data: prev.data.map((a) =>
           a.id === res.data.payload.data.id ? res.data.payload.data : a,
         ),
-      );
+      }));
     } catch (error) {
       handleError(error);
     } finally {
@@ -81,9 +97,10 @@ export const useAsset = () => {
     setIsLoading(true);
     try {
       const res = await deleteAsset(id);
-      setAssets((prevAssets) =>
-        prevAssets.filter((a) => a.id !== res.data.payload.data.id),
-      );
+      setAssets((prev) => ({
+        ...prev,
+        data: prev.data.filter((a) => a.id !== res.data.payload.data.id),
+      }));
     } catch (error) {
       handleError(error);
     } finally {
@@ -121,5 +138,7 @@ export const useAsset = () => {
     setStatus,
     categoryId,
     setCategoryId,
+    page,
+    setPage,
   };
 };

@@ -1,6 +1,8 @@
 import { pool } from "../db/pool.js";
 import type { AuditLog, CreateAuditLogInput } from "../types/audit-log.js";
 
+import type { PaginatedResult } from "../types/pagination.js";
+
 export const runTransactionWithLog = async <T>(
   audit: CreateAuditLogInput,
   operation: (query: any) => Promise<T>,
@@ -22,11 +24,35 @@ export const runTransactionWithLog = async <T>(
     client.release();
   }
 };
-export const getAllActivityLogs = async (): Promise<AuditLog[]> => {
+export const getAllActivityLogs = async (
+  query: { page?: number; limit?: number } = {},
+): Promise<PaginatedResult<AuditLog>> => {
   try {
-    const logs = await pool.query(`SELECT a.*, e.name FROM activity_logs a
-    JOIN employees e ON a.user_id = e.id  ORDER BY a.created_at DESC  `);
-    return logs.rows;
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const logs = await pool.query(
+      `SELECT a.*, e.name, COUNT(*) OVER() as total FROM activity_logs a
+       JOIN employees e ON a.user_id = e.id  
+       ORDER BY a.created_at DESC  
+       LIMIT $1 OFFSET $2`,
+      [limit, offset],
+    );
+
+    const total = logs.rows.length > 0 ? Number(logs.rows[0].total) : 0;
+    const totalPages = Math.ceil(total / limit);
+    const data = logs.rows.map(({ total, ...log }) => log as AuditLog);
+
+    return {
+      data,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages,
+      },
+    };
   } catch (error) {
     throw error;
   }

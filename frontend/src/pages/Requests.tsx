@@ -11,6 +11,7 @@ export const Requests = () => {
     handleApproveRequest,
     handleRejectRequest,
     fetchReqByStatus,
+    setPage,
   } = useRequests();
 
   const columns = [
@@ -46,7 +47,7 @@ export const Requests = () => {
   console.log(requests);
   console.log(requests, "requests");
   return (
-    <div className="px-2 py-2 bg-(--bg-page)">
+    <div className="px-2 pt-6 pb-2 bg-(--bg-page)">
       <select
         onChange={handleFilterChange}
         className="input-field mb-4 w-40 hover:cursor-pointer"
@@ -58,7 +59,13 @@ export const Requests = () => {
       </select>
 
       {isLoading && <LoadingSpinner />}
-      <Table columns={columns} data={requests} actions={actions} />
+      <Table
+        columns={columns}
+        data={requests.data}
+        pagination={requests.pagination}
+        onPageChange={setPage}
+        actions={actions}
+      />
     </div>
   );
 };

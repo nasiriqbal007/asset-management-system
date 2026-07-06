@@ -73,7 +73,7 @@ export const AdminLayout = () => {
         </nav>
       </aside>
 
-      <div className="flex flex-col flex-1 overflow-hidden ">
+      <div className="flex flex-col flex-1 ">
         <header className=" h-16 border-(--border) border-b flex items-center justify-end px-6 ">
           <span>Welcome, {profile?.name ?? "Loading..."}</span>
 
@@ -91,7 +91,7 @@ export const AdminLayout = () => {
           </button>
         </header>
 
-        <main className="p-6 overflow-auto">
+        <main className="px-6 pb-0 pt-0 overflow-hidden flex flex-col flex-1 ">
           <Outlet />
         </main>
       </div>

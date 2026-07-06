@@ -8,7 +8,7 @@ import {
   getAssetByIdController,
   updateAssetController,
 } from "../controllers/asset.controller.js";
-import { validateAsset } from "../middleware/asset-middleware.js";
+import { validateBody } from "../middleware/validation-middleware.js";
 import {
   CreateAssetSchema,
   UpdateAssetSchema,
@@ -39,7 +39,7 @@ assetRoute.post(
   authMiddleware,
   requireRole(["admin"]),
   upload.single("image_url"),
-  validateAsset(CreateAssetSchema),
+  validateBody(CreateAssetSchema),
   createAssetController,
 );
 
@@ -48,7 +48,7 @@ assetRoute.patch(
   authMiddleware,
   requireRole(["admin"]),
   upload.single("image_url"),
-  validateAsset(UpdateAssetSchema),
+  validateBody(UpdateAssetSchema),
   updateAssetController,
 );
 

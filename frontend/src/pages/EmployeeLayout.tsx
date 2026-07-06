@@ -51,7 +51,7 @@ export const EmployeeLayout = () => {
           </button>
         </header>
 
-        <main className="p-6 overflow-auto">
+        <main className="px-6 pb-0 pt-0 overflow-hidden flex flex-col flex-1">
           <Outlet />
         </main>
       </div>

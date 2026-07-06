@@ -32,6 +32,10 @@ class AppError extends Error {
   static INVALID_TOKEN = new AppError("Invalid token", 401);
   static DATABASE_ERROR = new AppError("Database error occurred", 500);
   static INTERNAL_SERVER_ERROR = new AppError("Internal server error", 500);
+
+  static REQUEST_NOT_FOUND = new AppError("Asset request not found", 404);
+  static ALLOCATION_NOT_FOUND = new AppError("Asset allocation not found", 404);
+  static INVALID_ID = new AppError("Invalid ID format", 400);
 }
 
 export default AppError;

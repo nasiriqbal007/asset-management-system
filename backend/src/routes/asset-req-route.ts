@@ -8,7 +8,7 @@ import {
   rejectReqController,
 } from "../controllers/asset.req.controller.js";
 import { authMiddleware, requireRole } from "../middleware/auth-middleware.js";
-import { validateAssetReqData } from "../middleware/asset-req-middleware.js";
+import { validateBody } from "../middleware/validation-middleware.js";
 import { createAssetReqSchema } from "../validator/asset.req.validator.js";
 
 export const assetReqRouter = Router();
@@ -47,6 +47,6 @@ assetReqRouter.post(
   "/",
   authMiddleware,
   requireRole(["employee"]),
-  validateAssetReqData(createAssetReqSchema),
+  validateBody(createAssetReqSchema),
   createReqController,
 );

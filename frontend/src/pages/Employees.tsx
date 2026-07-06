@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Table } from "../components/Table";
 import { useEmployees } from "../hooks/useEmployeeAdmin";
 import type {
@@ -28,35 +28,45 @@ export const Employees = () => {
     deptId,
     setDeptId,
     exportEmpData,
+    setPage,
   } = useEmployees();
   const { departments } = useDepartments();
-  const columns = [
-    { key: "id", label: "ID" },
-    { key: "name", label: "Name" },
-    { key: "email", label: "Email" },
-    { key: "department", label: "Department" },
-    { key: "role", label: "Role" },
-    { key: "created_at", label: "Created At" },
-  ];
-  const actions = [
-    {
-      label: "Edit",
-      onClick: (row: Employee) => {
-        setEmployeeToEdit(row);
-        console.log(row);
-        setOpenModel(true);
-      },
-    },
 
-    {
-      label: "delete",
-      onClick: (row: Employee) => {
-        deleteEmp(row.id);
-      },
-    },
-  ];
+  const columns = useMemo(
+    () => [
+      { key: "id", label: "ID" },
+      { key: "name", label: "Name" },
+      { key: "email", label: "Email" },
+      { key: "department", label: "Department" },
+      { key: "role", label: "Role" },
+      { key: "created_at", label: "Created At" },
+    ],
+    [],
+  );
 
-  const handleSubmit = async (data: EmployeeCreateInput | EmployeeUpdateInput) => {
+  const actions = useMemo(
+    () => [
+      {
+        label: "Edit",
+        onClick: (row: Employee) => {
+          setEmployeeToEdit(row);
+          console.log(row);
+          setOpenModel(true);
+        },
+      },
+      {
+        label: "delete",
+        onClick: (row: Employee) => {
+          deleteEmp(row.id);
+        },
+      },
+    ],
+    [deleteEmp],
+  );
+
+  const handleSubmit = async (
+    data: EmployeeCreateInput | EmployeeUpdateInput,
+  ) => {
     if (employeeToEdit) {
       await updateEmp(data as EmployeeUpdateInput);
     } else {
@@ -66,7 +76,7 @@ export const Employees = () => {
   };
 
   return (
-    <div className="px-2 bg-(--bg-page)">
+    <div className="px-2 pt-6 bg-(--bg-page)">
       <div className="flex flex-wrap justify-between gap-4 items-center sticky top-0 bg-(--bg-page) z-10 py-2">
         <SearchInput
           placeholder="search employee"
@@ -84,6 +94,7 @@ export const Employees = () => {
         </button>
         <DropDown
           label="Department"
+          layout="horizontal"
           value={deptId}
           onChange={(e) =>
             setDeptId(e.target.value ? Number(e.target.value) : "")
@@ -101,7 +112,13 @@ export const Employees = () => {
       </div>
 
       {isLoading && <LoadingSpinner />}
-      <Table columns={columns} data={employees} actions={actions} />
+      <Table
+        columns={columns}
+        data={employees.data}
+        actions={actions}
+        pagination={employees.pagination}
+        onPageChange={setPage}
+      />
       {isModelOpen && (
         <EmployeeModal
           employee={employeeToEdit}

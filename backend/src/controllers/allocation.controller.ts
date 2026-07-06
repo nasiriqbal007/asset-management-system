@@ -13,8 +13,10 @@ export const getAllocationController = async (
   next: NextFunction,
 ) => {
   try {
-    const getAll = await getAllAllocations();
-    AppResponse.GET_ALL_Assets.send(res, getAll);
+    const page = req.query.page ? Number(req.query.page) : undefined;
+    const limit = req.query.limit ? Number(req.query.limit) : undefined;
+    const getAll = await getAllAllocations({ page, limit });
+    AppResponse.GET_ALL_ALLOCATIONS.send(res, getAll);
   } catch (error) {
     next(error);
   }
@@ -28,7 +30,7 @@ export const getEmployeeAllocationsController = async (
   try {
     const employeeId = Number(req.user?.userId);
     const allocations = await getEmployeeAllocationsService(employeeId);
-    AppResponse.GET_ALL_Assets.send(res, {
+    AppResponse.GET_ALL_ALLOCATIONS.send(res, {
       allocations: {
         data: allocations,
       },
@@ -45,6 +47,9 @@ export const assetReturnController = async (
 ) => {
   try {
     const id = Number(req.params.id);
+    if (!id || Number.isNaN(id)) {
+      throw AppError.INVALID_ID;
+    }
     const userId = Number(req.user?.userId);
     const returnAsset = await returnAssetService(userId, id);
     AppResponse.UPDATED_ITEM.send(res, returnAsset);

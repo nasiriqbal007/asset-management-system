@@ -52,7 +52,7 @@ export const getAssets = async (
   query: AssetQuery,
 ): Promise<PaginatedResult<Asset>> => {
   try {
-    const conditions: string[] = [];
+    const conditions: string[] = ["a.deleted_at IS NULL"];
     const values: unknown[] = [];
     let i = 1;
     if (query.asset_name) {
@@ -110,7 +110,7 @@ export const getAssets = async (
 
 export const assetById = async (assetId: number) => {
   try {
-    const asset = await pool.query("SELECT * FROM assets WHERE id=$1", [
+    const asset = await pool.query("SELECT * FROM assets WHERE id=$1 AND deleted_at IS NULL", [
       assetId,
     ]);
 
@@ -168,7 +168,7 @@ export const deleteAsset = async (assetId: number, userId: number) => {
     },
     async (client) => {
       const deletedAsset = await client.query(
-        "DELETE FROM assets WHERE id=$1 RETURNING *",
+        "UPDATE assets SET deleted_at = NOW() WHERE id=$1 RETURNING *",
         [assetId],
       );
       return deletedAsset.rows[0];
@@ -180,6 +180,7 @@ export const getAllAssetForExport = async (): Promise<Asset[]> => {
     `SELECT a.*, c.category_name
      FROM assets a 
      LEFT JOIN categories c ON a.category_id = c.id
+     WHERE a.deleted_at IS NULL
      ORDER BY a.created_at DESC`,
   );
   return result.rows;

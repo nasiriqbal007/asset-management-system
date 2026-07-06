@@ -48,6 +48,9 @@ export const getAssetByIdController = async (
 ) => {
   try {
     const assetId = Number(req.params.id);
+    if (!assetId || Number.isNaN(assetId)) {
+      throw AppError.INVALID_ID;
+    }
     const asset = await getAssetById(assetId);
     AppResponse.Item_BY_ID.send(res, asset);
   } catch (error) {
@@ -87,6 +90,9 @@ export const updateAssetController = async (
   try {
     const userId = Number(req.user?.userId);
     const assetId = Number(req.params.id);
+    if (!assetId || Number.isNaN(assetId)) {
+      throw AppError.INVALID_ID;
+    }
     const updateData = { ...req.body };
     if (req.file) {
       updateData.image_url = req.file.path;
@@ -113,6 +119,9 @@ export const deleteAssetController = async (
   try {
     const assetId = Number(req.params.id);
     const userId = Number(req.user?.userId);
+    if (!assetId || Number.isNaN(assetId)) {
+      throw AppError.INVALID_ID;
+    }
 
     const deleteAsset = await deleteAssetId(assetId, userId);
     AppResponse.DELETED_ITEM.send(res, deleteAsset);
@@ -128,7 +137,7 @@ export const exportAssetCSVController = async (
   try {
     const assets = await getAllAssetCSVExportService();
     if (!assets || assets.length === 0) {
-      throw AppError.USER_NOT_FOUND;
+      throw AppError.ASSET_NOT_FOUND;
     }
 
     const headers = Object.keys(assets[0]!);

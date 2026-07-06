@@ -13,13 +13,33 @@ import type {
   EmployeeUpdateInput,
 } from "../types/employee";
 import { handleError } from "../utils/handleError";
+import type { PaginatedResponse } from "../types/pagination";
 
 export const useEmployees = () => {
-  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [employees, setEmployees] = useState<PaginatedResponse<Employee>>({
+    data: [],
+    pagination: {
+      page: 1,
+      totalPages: 1,
+      limit: 5,
+      total: 0,
+    },
+  });
   const [isLoading, setIsLoading] = useState(false);
-  const [searchEmp, setSearchEmp] = useState("");
-  const [deptId, setDeptId] = useState<number | "">("");
+  const [searchEmp, setSearchEmpState] = useState("");
+  const [deptId, setDeptIdState] = useState<number | "">("");
   const [debouncedSearchEmp, setDebouncedSearchEmp] = useState(searchEmp);
+  const [page, setPage] = useState(1);
+
+  const setSearchEmp = (value: string) => {
+    setSearchEmpState(value);
+    setPage(1);
+  };
+
+  const setDeptId = (value: number | "") => {
+    setDeptIdState(value);
+    setPage(1);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -35,9 +55,11 @@ export const useEmployees = () => {
         const res = await getAllEmployeeList({
           name: debouncedSearchEmp || undefined,
           department_id: deptId === "" ? undefined : deptId,
+          page,
+          limit: 5,
         });
 
-        setEmployees(res.data.payload.data);
+        setEmployees(res.data.payload);
       } catch (error) {
         handleError(error);
       } finally {
@@ -45,7 +67,7 @@ export const useEmployees = () => {
       }
     };
     fetchEmployees();
-  }, [debouncedSearchEmp, deptId]);
+  }, [debouncedSearchEmp, deptId, page]);
 
   const createEmp = async (data: EmployeeCreateInput) => {
     setIsLoading(true);
@@ -54,7 +76,10 @@ export const useEmployees = () => {
       console.log(res);
       const newEmployee = res.data.payload;
       console.log(newEmployee);
-      setEmployees((prevEmployees) => [...prevEmployees, newEmployee]);
+      setEmployees((prev) => ({
+        ...prev,
+        data: [...prev.data, newEmployee],
+      }));
     } catch (error) {
       handleError(error);
     } finally {
@@ -66,11 +91,12 @@ export const useEmployees = () => {
     setIsLoading(true);
     try {
       const res = await updateEmployee(data);
-      setEmployees((prevEmployees) =>
-        prevEmployees.map((emp) =>
+      setEmployees((prev) => ({
+        ...prev,
+        data: prev.data.map((emp) =>
           emp.id === res.data.payload.id ? res.data.payload : emp,
         ),
-      );
+      }));
     } catch (error) {
       handleError(error);
     } finally {
@@ -82,9 +108,10 @@ export const useEmployees = () => {
     setIsLoading(true);
     try {
       const res = await deleteEmployee(id);
-      setEmployees((prevEmployees) =>
-        prevEmployees.filter((emp) => emp.id !== res.data.payload.id),
-      );
+      setEmployees((prev) => ({
+        ...prev,
+        data: prev.data.filter((emp) => emp.id !== res.data.payload.id),
+      }));
     } catch (error) {
       handleError(error);
     } finally {
@@ -124,5 +151,7 @@ export const useEmployees = () => {
     deptId,
     setDeptId,
     exportEmpData,
+    page,
+    setPage,
   };
 };
