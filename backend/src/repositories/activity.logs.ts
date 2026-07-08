@@ -17,6 +17,7 @@ export const runTransactionWithLog = async <T>(
     );
     await client.query("COMMIT");
     return result;
+    
   } catch (error) {
     await client.query("ROLLBACK");
     throw error;

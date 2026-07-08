@@ -13,13 +13,14 @@ export const useCategories = () => {
       try {
         const res = await getAllCategories();
         setCategories(res.data.payload.categories);
+      
       } catch (error) {
         handleError(error);
       } finally {
         setIsLoading(false);
       }
     };
-
+      
     fetchCategories();
   }, []);
 

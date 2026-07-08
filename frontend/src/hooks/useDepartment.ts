@@ -14,6 +14,7 @@ export const useDepartments = () => {
       try {
         const res = await getAllDepartments();
         setDepartments(res.data.payload);
+        
       } catch (error) {
         handleError(error);
       } finally {

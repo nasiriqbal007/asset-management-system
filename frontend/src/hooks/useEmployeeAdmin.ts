@@ -14,6 +14,7 @@ import type {
 } from "../types/employee";
 import { handleError } from "../utils/handleError";
 import type { PaginatedResponse } from "../types/pagination";
+import toast from "react-hot-toast";
 
 export const useEmployees = () => {
   const [employees, setEmployees] = useState<PaginatedResponse<Employee>>({
@@ -73,13 +74,14 @@ export const useEmployees = () => {
     setIsLoading(true);
     try {
       const res = await createEmployee(data);
-      console.log(res);
+
       const newEmployee = res.data.payload;
-      console.log(newEmployee);
+
       setEmployees((prev) => ({
         ...prev,
         data: [...prev.data, newEmployee],
       }));
+      toast.success("Employee created successfully");
     } catch (error) {
       handleError(error);
     } finally {
@@ -97,6 +99,7 @@ export const useEmployees = () => {
           emp.id === res.data.payload.id ? res.data.payload : emp,
         ),
       }));
+      toast.success("Employee updated successfully");
     } catch (error) {
       handleError(error);
     } finally {
@@ -133,6 +136,7 @@ export const useEmployees = () => {
       link.click();
       link.parentNode?.removeChild(link);
       window.URL.revokeObjectURL(url);
+      toast.success("Employee data exported successfully");
     } catch (error) {
       handleError(error);
     } finally {

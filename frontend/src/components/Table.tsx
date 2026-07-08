@@ -15,8 +15,10 @@ type TableProps<T extends { id: number | string }> = {
     limit: number;
     total: number;
   };
+  isLoading?: boolean;
   onPageChange?: (newPage: number) => void;
   className?: string;
+  submittingId?: number | string | null;
 };
 
 import { Pagination } from "./Pagination";
@@ -27,7 +29,9 @@ export const Table = <T extends { id: number | string }>({
   actions,
   pagination,
   onPageChange,
-  className="max-h-[calc(100vh-250px)]"
+  className = "max-h-[calc(100vh-250px)]",
+  isLoading,
+  submittingId,
 }: TableProps<T>) => {
   return (
     <div className="w-full min-w-0 rounded-lg border bg-(--bg-card) overflow-hidden flex flex-col">
@@ -72,15 +76,19 @@ export const Table = <T extends { id: number | string }>({
                     <td className="px-4 py-3 flex gap-2">
                       {actions
                         .filter((action) => !action.show || action.show(row))
-                        .map((action) => (
-                          <button
-                            key={action.label}
-                            onClick={() => action.onClick(row)}
-                            className="text-btn"
-                          >
-                            {action.label}
-                          </button>
-                        ))}
+                        .map((action) => {
+                          const isThisRow = submittingId === row.id;
+                          return (
+                            <button
+                              disabled={isLoading || isThisRow}
+                              key={action.label}
+                              onClick={() => action.onClick(row)}
+                              className={`text-btn ${isThisRow ? "text-gray-400 cursor-not-allowed opacity-50" : ""}?`}
+                            >
+                              {isThisRow ? "Processing..." : action.label}
+                            </button>
+                          );
+                        })}
                     </td>
                   )}
                 </tr>

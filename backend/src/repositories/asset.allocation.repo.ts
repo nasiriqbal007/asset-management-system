@@ -30,7 +30,6 @@ export const createAllocation = async (
 
 export const assetReturnDate = async (
   id: number,
-
   userId: number,
 ): Promise<AssetAllocation | null> => {
   return await runTransactionWithLog(
@@ -72,9 +71,12 @@ SELECT asset_allocations.*, assets.asset_name, employees.name AS employee_name, 
       [limit, offset],
     );
 
-    const total = allocations.rows.length > 0 ? Number(allocations.rows[0].total) : 0;
+    const total =
+      allocations.rows.length > 0 ? Number(allocations.rows[0].total) : 0;
     const totalPages = Math.ceil(total / limit);
-    const data = allocations.rows.map(({ total, ...alloc }) => alloc as AssetAllocation);
+    const data = allocations.rows.map(
+      ({ total, ...alloc }) => alloc as AssetAllocation,
+    );
 
     return {
       data,

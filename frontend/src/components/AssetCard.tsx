@@ -10,7 +10,7 @@ export const AssetCard = ({ asset, actions }: AssetCardProps) => {
     <div className="bg-(--bg-card) p-4 rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-shadow duration-300">
       {asset.image_url ? (
         <img
-          src={asset.image_url}
+     src={`http://localhost:3000${asset.image_url}`} 
           alt={asset.asset_name}
           className="w-full h-40 object-cover rounded-md mb-2"
         />

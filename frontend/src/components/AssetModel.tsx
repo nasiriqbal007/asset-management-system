@@ -9,9 +9,15 @@ type AssetModalProps = {
   asset?: Asset | null;
   onClose: () => void;
   onSubmit: (data: AssetCreateInput | AssetUpdateInput) => void;
+  isLoading?: boolean;
 };
 
-export const AssetModal = ({ asset, onClose, onSubmit }: AssetModalProps) => {
+export const AssetModal = ({
+  asset,
+  onClose,
+  onSubmit,
+  isLoading,
+}: AssetModalProps) => {
   const { categories } = useCategories();
   const [file, setImageFile] = useState<File | null>(null);
   const {
@@ -32,6 +38,7 @@ export const AssetModal = ({ asset, onClose, onSubmit }: AssetModalProps) => {
 
   const handleFormSubmit = (data: AssetCreateInput | AssetUpdateInput) => {
     const formData = new FormData();
+
     formData.append("asset_name", data.asset_name ?? "");
     formData.append("serial_number", data.serial_number ?? "");
     formData.append("purchase_date", data.purchase_date ?? "");
@@ -46,10 +53,19 @@ export const AssetModal = ({ asset, onClose, onSubmit }: AssetModalProps) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-(--bg-card) p-6 rounded-lg w-full max-w-md flex flex-col gap-4">
-        <h2 className="text-xl font-bold">
-          {asset ? "Edit Asset" : "Add Asset"}
-        </h2>
+      <div className="bg-(--bg-card) p-6 rounded-lg w-full max-w-md max-h-[85vh] overflow-y-auto flex flex-col gap-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold">
+            {asset ? "Edit Asset" : "Add Asset"}
+          </h2>
+          <button
+            className="text-3xl  hover:cursor-pointer hover:text-(--text-primary) hover:rotate-180 duration-500 transition-all"
+            onClick={onClose}
+          >
+            &times;
+          </button>
+        </div>
+
         <form
           onSubmit={handleSubmit(handleFormSubmit)}
           className="flex flex-col gap-3"
@@ -59,7 +75,7 @@ export const AssetModal = ({ asset, onClose, onSubmit }: AssetModalProps) => {
             {...register("asset_name", { required: "Asset name is required" })}
             error={errors.asset_name?.message}
           />
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 ">
             <label className="text(--text-primary) text-md">Image</label>
             <input
               type="file"
@@ -68,47 +84,52 @@ export const AssetModal = ({ asset, onClose, onSubmit }: AssetModalProps) => {
               className="input-field"
             />
           </div>
-          <Input
-            label="Serial Number"
-            {...register("serial_number", {
-              required: "Serial number is required",
-            })}
-            error={errors.serial_number?.message}
-          />
-          <Input
-            label="Purchase Date"
-            type="date"
-            max={new Date().toISOString().split("T")[0]}
-            {...register("purchase_date", {
-              required: "Purchase date is required",
-            })}
-            error={errors.purchase_date?.message}
-          />
-          <DropDown
-            label="Category"
-            options={
-              categories?.map((cat) => ({
-                value: cat.id,
-                label: cat.category_name,
-              })) ?? []
-            }
-            error={errors.category_id?.message}
-            {...register("category_id", {
-              required: "Category is required",
-              valueAsNumber: true,
-            })}
-          />
-          <DropDown
-            label="Status"
-            options={[
-              { value: "available", label: "Available" },
-              { value: "allocated", label: "Allocated" },
-              { value: "damaged", label: "Damaged" },
-              { value: "retired", label: "Retired" },
-            ]}
-            error={errors.status?.message}
-            {...register("status", { required: "Status is required" })}
-          />
+          <div className="md:flex-row md:items-center  md:gap-4  flex flex-col justify-between">
+            <Input
+              label="Serial Number"
+              {...register("serial_number", {
+                required: "Serial number is required",
+              })}
+              error={errors.serial_number?.message}
+            />
+            <Input
+              label="Purchase Date"
+              type="date"
+              max={new Date().toISOString().split("T")[0]}
+              {...register("purchase_date", {
+                required: "Purchase date is required",
+              })}
+              error={errors.purchase_date?.message}
+            />
+          </div>
+          <div className="md:flex-row md:items-center md:gap-4 flex flex-col justify-between">
+            <DropDown
+              label="Category"
+              options={
+                categories?.map((cat) => ({
+                  value: cat.id,
+                  label: cat.category_name,
+                })) ?? []
+              }
+              error={errors.category_id?.message}
+              {...register("category_id", {
+                required: "Category is required",
+                valueAsNumber: true,
+              })}
+            />
+            <DropDown
+              label="Status"
+              options={[
+                { value: "available", label: "Available" },
+                { value: "allocated", label: "Allocated" },
+                { value: "damaged", label: "Damaged" },
+                { value: "retired", label: "Retired" },
+              ]}
+              error={errors.status?.message}
+              {...register("status", { required: "Status is required" })}
+            />
+          </div>
+
           <div className="flex gap-2 justify-end">
             <button
               type="button"
@@ -117,8 +138,12 @@ export const AssetModal = ({ asset, onClose, onSubmit }: AssetModalProps) => {
             >
               Cancel
             </button>
-            <button type="submit" className="primary-button">
-              {asset ? "Update" : "Create"}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="primary-button"
+            >
+              {isLoading ? "Saving" : asset ? "Update" : "Create"}
             </button>
           </div>
         </form>

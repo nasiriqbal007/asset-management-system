@@ -22,7 +22,7 @@ export const Login = () => {
         if (res.user.role === "admin") {
           navigate("/admin/dashboard");
         } else {
-          navigate("/employee");
+          navigate("/employee/available-assets");
         }
       }
     } catch (error) {

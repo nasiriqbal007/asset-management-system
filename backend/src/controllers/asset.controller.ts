@@ -70,7 +70,7 @@ export const createAssetController = async (
     const userId = Number(req.user?.userId);
     const newAsset = await AddAsset(userId, {
       ...req.body,
-      image_url: req.file?.path,
+      image_url: `/uploads/${req.file.filename}`,
     });
     AppResponse.ITEM_CREATED.send(res, newAsset);
   } catch (error) {
@@ -95,7 +95,7 @@ export const updateAssetController = async (
     }
     const updateData = { ...req.body };
     if (req.file) {
-      updateData.image_url = req.file.path;
+      updateData.image_url = `/uploads/${req.file.filename}`;
     }
     const asset = await updatedAsset(assetId, userId, updateData);
     AppResponse.UPDATED_ITEM.send(res, asset);

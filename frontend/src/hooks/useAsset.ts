@@ -15,6 +15,7 @@ import {
 } from "../services/asset.service";
 import { handleError } from "../utils/handleError";
 import type { PaginatedResponse } from "../types/pagination";
+import toast from "react-hot-toast";
 
 export const useAsset = () => {
   const [assets, setAssets] = useState<PaginatedResponse<Asset>>({
@@ -65,10 +66,12 @@ export const useAsset = () => {
     setIsLoading(true);
     try {
       const res = await createNewAsset(data);
+      const newAsset = res.data.payload;
       setAssets((prev) => ({
         ...prev,
-        data: [...prev.data, res.data.payload.data],
+        data: [...prev.data, newAsset],
       }));
+      toast.success(res.data.message);
     } catch (error) {
       handleError(error);
     } finally {
@@ -76,16 +79,19 @@ export const useAsset = () => {
     }
   };
 
-  const updateAsset = async (data: AssetUpdateInput) => {
+  const updateAsset = async (id: number, data: AssetUpdateInput) => {
     setIsLoading(true);
     try {
-      const res = await updateCurrentAsset(data);
+      const res = await updateCurrentAsset(id, data);
+      const updatedAsset = res.data.payload;
       setAssets((prev) => ({
         ...prev,
         data: prev.data.map((a) =>
-          a.id === res.data.payload.data.id ? res.data.payload.data : a,
+          a.id === updatedAsset.id ? updatedAsset : a,
         ),
       }));
+
+      toast.success(res.data.message);
     } catch (error) {
       handleError(error);
     } finally {
@@ -99,8 +105,9 @@ export const useAsset = () => {
       const res = await deleteAsset(id);
       setAssets((prev) => ({
         ...prev,
-        data: prev.data.filter((a) => a.id !== res.data.payload.data.id),
+        data: prev.data.filter((a) => a.id !== res.data.payload.data),
       }));
+      toast.success("Asset deleted successfully");
     } catch (error) {
       handleError(error);
     } finally {
@@ -120,6 +127,7 @@ export const useAsset = () => {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+      toast.success("Assets exported successfully");
     } catch (error) {
       handleError(error);
     }

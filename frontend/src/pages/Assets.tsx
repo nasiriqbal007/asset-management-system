@@ -34,8 +34,8 @@ export const Assets = () => {
   const { categories } = useCategories();
 
   const handelSubmit = async (data: AssetCreateInput | AssetUpdateInput) => {
-    if (assetToEdit) {
-      await updateAsset(data as AssetUpdateInput);
+    if (assetToEdit?.id) {
+      await updateAsset(assetToEdit.id, data as AssetUpdateInput);
     } else {
       await createAsset(data as AssetCreateInput);
     }
@@ -97,31 +97,33 @@ export const Assets = () => {
 
       <div className="flex-1 overflow-y-auto min-h-0 pr-1 pb-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {assets.data.map((asset) => (
-            <AssetCard
-              key={asset.id}
-              asset={asset}
-              actions={
-                <div className="flex justify-end mt-4 gap-2">
-                  <button
-                    className="secondary-button"
-                    onClick={() => {
-                      setAssetToEdit(asset);
-                      setOpenModel(true);
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="secondary-button danger-button "
-                    onClick={() => AssetDelete(asset.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              }
-            />
-          ))}
+          {assets.data
+            .filter((asset) => asset && asset.id)
+            .map((asset) => (
+              <AssetCard
+                key={asset.id}
+                asset={asset}
+                actions={
+                  <div className="flex justify-end mt-4 gap-2">
+                    <button
+                      className="secondary-button"
+                      onClick={() => {
+                        setAssetToEdit(asset);
+                        setOpenModel(true);
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="secondary-button danger-button "
+                      onClick={() => AssetDelete(asset.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                }
+              />
+            ))}
         </div>
       </div>
 
@@ -140,6 +142,7 @@ export const Assets = () => {
             setOpenModel(false);
             setAssetToEdit(null);
           }}
+          isLoading={isLoading}
           onSubmit={handelSubmit}
         />
       )}

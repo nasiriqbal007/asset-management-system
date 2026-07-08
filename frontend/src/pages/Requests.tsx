@@ -1,4 +1,4 @@
-import type { ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import { Table } from "../components/Table";
 import { useRequests } from "../hooks/useReq";
 import type { AssetRequest } from "../types/request";
@@ -22,20 +22,29 @@ export const Requests = () => {
 
     { key: "status", label: "Status" },
   ];
-
+  const [actionId, setActionId] = useState<number | null>(null);
   const actions = [
     {
       label: "Approve",
-      onClick: (row: AssetRequest) => handleApproveRequest(row.id),
+      onClick: (row: AssetRequest) => {
+        setActionId(row.id);
+
+        handleApproveRequest(row.id);
+        if (actionId === row.id) {
+          setActionId(null);
+        }
+      },
 
       show: (row: AssetRequest) => row.status === "pending",
     },
     {
       label: "Reject",
       onClick: (row: AssetRequest) => {
-        console.log("row:", row);
-        console.log("assetId before function:", row.asset_id);
+        setActionId(row.id);
         handleRejectRequest(row.id);
+        if (actionId === row.id) {
+          setActionId(null);
+        }
       },
       show: (row: AssetRequest) => row.status === "pending",
     },
@@ -44,8 +53,7 @@ export const Requests = () => {
   const handleFilterChange = (event: ChangeEvent<HTMLSelectElement>) => {
     fetchReqByStatus(event.target.value);
   };
-  console.log(requests);
-  console.log(requests, "requests");
+
   return (
     <div className="px-2 pt-6 pb-2 bg-(--bg-page)">
       <select
@@ -65,6 +73,8 @@ export const Requests = () => {
         pagination={requests.pagination}
         onPageChange={setPage}
         actions={actions}
+        submittingId={actionId}
+        isLoading={isLoading}
       />
     </div>
   );

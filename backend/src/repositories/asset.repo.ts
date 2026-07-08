@@ -21,31 +21,35 @@ export const checkSerialNumberExists = async (serialNumber: string) => {
 };
 
 export const createAsset = async (userId: number, data: CreateAssetInput) => {
-  return await runTransactionWithLog(
-    {
-      user_id: userId,
-      action: "Create",
-      entity_type: "Asset",
-    },
-    async (client) => {
-      const newAsset = await client.query(
-        `INSERT INTO assets 
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    const newAsset = await client.query(
+      `INSERT INTO assets 
       (asset_name, image_url, category_id, serial_number, purchase_date, status)
       VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *`,
-        [
-          data.asset_name,
-          data.image_url,
-          data.category_id,
-          data.serial_number,
-          data.purchase_date,
-          data.status,
-        ],
-      );
-
-      return newAsset.rows[0];
-    },
-  );
+      [
+        data.asset_name,
+        data.image_url,
+        data.category_id,
+        data.serial_number,
+        data.purchase_date,
+        data.status,
+      ],
+    );
+    await client.query(
+      `INSERT INTO activity_logs(user_id, action,entity_type, entity_id) VALUES($1,$2,$3,$4) RETURNING *`,
+      [userId, "create", "Asset", newAsset.rows[0].id],
+    );
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
 };
 
 export const getAssets = async (
@@ -110,9 +114,10 @@ export const getAssets = async (
 
 export const assetById = async (assetId: number) => {
   try {
-    const asset = await pool.query("SELECT * FROM assets WHERE id=$1 AND deleted_at IS NULL", [
-      assetId,
-    ]);
+    const asset = await pool.query(
+      "SELECT * FROM assets WHERE id=$1 AND deleted_at IS NULL",
+      [assetId],
+    );
 
     return asset.rows[0];
   } catch (error) {
@@ -130,6 +135,7 @@ export const updateAsset = async (
       user_id: userId,
       action: "update",
       entity_type: "Asset",
+      entity_id: assetId,
     },
     async (client) => {
       const updatedAsset = await client.query(
@@ -165,6 +171,7 @@ export const deleteAsset = async (assetId: number, userId: number) => {
       user_id: userId,
       action: "update",
       entity_type: "Asset",
+      entity_id: assetId,
     },
     async (client) => {
       const deletedAsset = await client.query(

@@ -3,6 +3,7 @@ import { LoginService, Profile, SignUpService } from "../services/auth.service";
 import { useEffect, useState } from "react";
 import type { User } from "../types/user";
 import { handleError } from "../utils/handleError";
+import toast from "react-hot-toast";
 
 type LoginInput = { email: string; password: string };
 type SignUpInput = {
@@ -26,6 +27,7 @@ export const useLogin = () => {
     try {
       const res = await LoginService(data);
 
+      toast.success("Login successful");
       return res.data.payload;
     } catch (error) {
       handleError(error);
@@ -48,6 +50,7 @@ export const useSignUp = () => {
     try {
       const res = await SignUpService(data);
       return res.data;
+      toast.success("Sign up successful");
     } catch (error) {
       handleError(error);
     } finally {

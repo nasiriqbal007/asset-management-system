@@ -8,6 +8,7 @@ import {
 import type { AssetRequest } from "../types/request";
 import { handleError } from "../utils/handleError";
 import type { PaginatedResponse } from "../types/pagination";
+import toast from "react-hot-toast";
 
 export const useRequests = () => {
   const [requests, setRequests] = useState<PaginatedResponse<AssetRequest>>({
@@ -34,6 +35,7 @@ export const useRequests = () => {
             })
           : await getAllRequests({ page, limit: requests.pagination.limit });
         setRequests(res.data.payload);
+        
       } catch (error) {
         handleError(error);
       } finally {
@@ -51,6 +53,7 @@ export const useRequests = () => {
         ...prev,
         data: prev.data.filter((request) => request.id !== id),
       }));
+      toast.success("Request rejected successfully");
     } catch (error) {
       handleError(error);
     }
@@ -63,6 +66,7 @@ export const useRequests = () => {
         ...prev,
         data: prev.data.filter((request) => request.id !== id),
       }));
+      toast.success("Request approved successfully");
     } catch (error) {
       handleError(error);
     }

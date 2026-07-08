@@ -11,7 +11,7 @@ export const getAllAssetList = (params: AssetQueryParams) =>
   });
 export const createNewAsset = (data: AssetCreateInput) =>
   api.post("/assets", data);
-export const updateCurrentAsset = (data: AssetUpdateInput) =>
-  api.patch(`assets/${data.id}`, data);
+export const updateCurrentAsset = (id: number, data: AssetUpdateInput) =>
+  api.patch(`assets/${id}`, data);
 export const deleteAsset = (id: number) => api.delete(`assets/${id}`);
 export const exportAssetsCSV = () => api.get("assets/export");

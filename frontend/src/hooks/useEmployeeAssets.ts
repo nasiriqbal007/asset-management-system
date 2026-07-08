@@ -11,6 +11,7 @@ import type { Allocation } from "../types/allocation";
 import type { PaginatedResponse } from "../types/pagination";
 
 import { handleError } from "../utils/handleError";
+import toast from "react-hot-toast";
 
 export const useEmployeeAssets = () => {
   const [assets, setAssets] = useState<PaginatedResponse<Asset>>({
@@ -42,7 +43,7 @@ export const useEmployeeAssets = () => {
       }
     };
     fetchAssets();
-  }, [page]);
+  }, [assets.pagination.limit, page]);
 
   useEffect(() => {
     const fetchAllocatedAssets = async () => {
@@ -50,7 +51,6 @@ export const useEmployeeAssets = () => {
       try {
         const res = await getMyAllocations();
         setAllocatedAssets(res.data.payload.allocations.data);
-        console.log(res.data.payload.allocations.data);
       } catch (error) {
         handleError(error);
       } finally {
@@ -66,6 +66,7 @@ export const useEmployeeAssets = () => {
       setAllocatedAssets((prevAllocated) =>
         prevAllocated.filter((alloc) => alloc.id !== id),
       );
+      toast.success("Asset returned successfully");
     } catch (error) {
       handleError(error);
     } finally {
@@ -77,6 +78,7 @@ export const useEmployeeAssets = () => {
     setIsLoading(true);
     try {
       await reqForAsset(data);
+      toast.success("Asset request submitted successfully");
     } catch (error) {
       handleError(error);
     } finally {

@@ -27,6 +27,7 @@ export const useAllocation = () => {
           page,
           limit: allocations.pagination.limit,
         });
+
         setAllocations(res.data.payload);
       } catch (error) {
         handleError(error);

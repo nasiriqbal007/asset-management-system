@@ -13,10 +13,16 @@ import { useDepartments } from "../hooks/useDepartment";
 type ModalProps = {
   employee?: Employee | null;
   onClose: () => void;
+  isLoading?: boolean;
   onSubmit: (data: EmployeeCreateInput | EmployeeUpdateInput) => void;
 };
 
-export const EmployeeModal = ({ employee, onClose, onSubmit }: ModalProps) => {
+export const EmployeeModal = ({
+  employee,
+  onClose,
+  onSubmit,
+  isLoading,
+}: ModalProps) => {
   const { departments } = useDepartments();
   const {
     register,
@@ -33,10 +39,18 @@ export const EmployeeModal = ({ employee, onClose, onSubmit }: ModalProps) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-(--bg-card) p-6 rounded-lg w-full max-w-md flex flex-col gap-4">
-        <h2 className="text-xl font-bold">
-          {employee ? "Edit Employee" : "Add Employee"}
-        </h2>
+      <div className="bg-(--bg-card) p-6 rounded-lg w-full max-w-md max-h-[85vh] overflow-y-auto flex flex-col gap-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold">
+            {employee ? "Edit Employee" : "Add Employee"}
+          </h2>
+          <button
+            className="text-3xl  hover:cursor-pointer hover:text-(--text-primary) hover:rotate-180 duration-500 transition-all"
+            onClick={onClose}
+          >
+            &times;
+          </button>
+        </div>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
           <Input
             label="Name"
@@ -78,8 +92,12 @@ export const EmployeeModal = ({ employee, onClose, onSubmit }: ModalProps) => {
             >
               Cancel
             </button>
-            <button type="submit" className="primary-button">
-              {employee ? "Update" : "Create"}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="primary-button"
+            >
+              {isLoading ? "Saving..." : employee ? "Update" : "Create"}
             </button>
           </div>
         </form>
