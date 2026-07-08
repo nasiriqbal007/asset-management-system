@@ -1,14 +1,28 @@
 import { NavLink, Outlet, useNavigate } from "react-router";
+import { useState } from "react";
 import { useProfile } from "../hooks/useAuth";
 
 export const EmployeeLayout = () => {
   const { profile } = useProfile();
   const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-(--bg-page) text-(--text-primary) ">
-      <aside className="w-64 flex flex-col border-r border-(--border) bg-(--primary-light)">
-        <div className="p-4 text-xl font-semibold">Asset Manager</div>
+    <div className="flex h-screen bg-(--bg-page) text-(--text-primary) flex-col md:flex-row">
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 w-64 transform bg-(--primary-light) border-r border-(--border) transition-transform duration-300 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } md:relative md:translate-x-0 md:top-0 md:z-auto`}
+      >
+        <div className="flex items-center justify-between border-b border-(--border) p-4 md:justify-center">
+          <div className="text-xl font-semibold">Asset Manager</div>
+          <button
+            className="primary-button md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          >
+            Close
+          </button>
+        </div>
         <nav className="flex flex-col gap-1 p-4">
           <NavLink
             className={({ isActive }) =>
@@ -33,12 +47,27 @@ export const EmployeeLayout = () => {
         </nav>
       </aside>
 
-      <div className="flex flex-col flex-1 ">
-        <header className="h-16 border-(--border) border-b flex items-center justify-end px-6">
-          <span>Welcome, {profile?.name ?? "Loading..."}</span>
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/30 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      <div className="flex flex-col flex-1 md:pl-0">
+        <header className="h-16 border-(--border) border-b flex items-center justify-between gap-4 px-4 md:px-6">
+          <button
+            className="primary-button md:hidden"
+            onClick={() => setSidebarOpen(true)}
+          >
+            Menu
+          </button>
+          <span className="flex-1 text-sm md:text-base">
+            Welcome, {profile?.name ?? "Loading..."}
+          </span>
 
           <button
-            className="primary-button ml-4"
+            className="primary-button"
             onClick={() => {
               if (window.confirm("Are you sure you want to logout?")) {
                 localStorage.removeItem("token");
@@ -51,7 +80,7 @@ export const EmployeeLayout = () => {
           </button>
         </header>
 
-        <main className="px-6 pb-0 pt-0 overflow-hidden flex flex-col flex-1">
+        <main className="px-4 pb-4 pt-4 overflow-auto flex flex-col flex-1 md:px-6">
           <Outlet />
         </main>
       </div>

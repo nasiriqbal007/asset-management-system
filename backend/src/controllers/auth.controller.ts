@@ -4,7 +4,7 @@ import {
   getAllDepService,
   registerUser,
 } from "../services/auth-service.js";
-import AppError from "../Error/app-error.js";
+
 import AppResponse from "../Response/app-response.js";
 
 export const RegisterController = async (
