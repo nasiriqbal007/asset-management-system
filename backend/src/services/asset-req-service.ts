@@ -136,13 +136,20 @@ export const approveRequestService = async (
       throw AppError.REQUEST_NOT_FOUND;
     }
 
+    const allocatedAssetId = data?.asset_id || updatedReq.asset_id;
     const allocation = await createAllocationService(userId, {
-      asset_id: data?.asset_id || updatedReq.asset_id,
+      asset_id: allocatedAssetId,
       employee_id: data?.employee_id || updatedReq.employee_id,
     });
     if (!allocation) {
       throw AppError.VALIDATION_ERROR;
     }
+
+    await client.query(
+      "UPDATE assets SET status = $1 WHERE id = $2",
+      ["allocated", allocatedAssetId],
+    );
+
     await client.query(
       "INSERT INTO activity_logs (user_id,action,entity_type, entity_id) VALUES($1,$2,$3,$4)",
       [userId, "Approved", "Asset Request", reqId],

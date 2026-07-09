@@ -11,7 +11,13 @@ export type Employee = {
 export type EmployeeCreateInput = Omit<Employee, "id" | "created_at"> & {
   password: string;
 };
-export type EmployeeUpdateInput = Partial<EmployeeCreateInput> & { id: number };
+export type EmployeeUpdateInput = {
+  id?: number;
+  name: string;
+  email: string;
+  department_id: number;
+  password?: string;
+};
 export type EmpQueryParams = {
   name?: string;
   department_id?: number;

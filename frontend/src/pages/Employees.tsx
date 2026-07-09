@@ -65,10 +65,11 @@ export const Employees = () => {
   );
 
   const handleSubmit = async (
-    data: EmployeeCreateInput | EmployeeUpdateInput,
+    data: EmployeeCreateInput | Omit<EmployeeUpdateInput, "id">,
   ) => {
     if (employeeToEdit) {
-      await updateEmp(data as EmployeeUpdateInput);
+      await updateEmp(employeeToEdit.id, data as EmployeeUpdateInput);
+      
     } else {
       await createEmp(data as EmployeeCreateInput);
     }

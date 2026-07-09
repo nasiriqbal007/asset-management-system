@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useCallback, useEffect, useState } from "react";
 
 import {
   getAllEmployeeList,
@@ -15,6 +16,7 @@ import type {
 import { handleError } from "../utils/handleError";
 import type { PaginatedResponse } from "../types/pagination";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 export const useEmployees = () => {
   const [employees, setEmployees] = useState<PaginatedResponse<Employee>>({
@@ -49,26 +51,34 @@ export const useEmployees = () => {
     return () => clearTimeout(timer);
   }, [searchEmp]);
 
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      setIsLoading(true);
-      try {
-        const res = await getAllEmployeeList({
-          name: debouncedSearchEmp || undefined,
-          department_id: deptId === "" ? undefined : deptId,
-          page,
-          limit: 5,
-        });
+  const fetchEmployees = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const res = await getAllEmployeeList({
+        name: debouncedSearchEmp || undefined,
+        department_id: deptId === "" ? undefined : deptId,
+        page,
+        limit: 5,
+      });
 
-        setEmployees(res.data.payload);
-      } catch (error) {
+      setEmployees(res.data.payload);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        setEmployees((prev) => ({
+          ...prev,
+          data: [],
+          pagination: { ...prev.pagination, total: 0, totalPages: 1 },
+        }));
+      } else {
         handleError(error);
-      } finally {
-        setIsLoading(false);
       }
-    };
-    fetchEmployees();
+    } finally {
+      setIsLoading(false);
+    }
   }, [debouncedSearchEmp, deptId, page]);
+  useEffect(() => {
+    fetchEmployees();
+  }, [fetchEmployees]);
 
   const createEmp = async (data: EmployeeCreateInput) => {
     setIsLoading(true);
@@ -89,16 +99,20 @@ export const useEmployees = () => {
     }
   };
 
-  const updateEmp = async (data: EmployeeUpdateInput) => {
+  const updateEmp = async (id: number, data: EmployeeUpdateInput) => {
     setIsLoading(true);
     try {
-      const res = await updateEmployee(data);
+      const res = await updateEmployee(id, data);
+
+      const updatedEmployee = res.data.payload;
+      await fetchEmployees();
       setEmployees((prev) => ({
         ...prev,
         data: prev.data.map((emp) =>
-          emp.id === res.data.payload.id ? res.data.payload : emp,
+          emp.id === updatedEmployee.id ? updatedEmployee : emp,
         ),
       }));
+
       toast.success("Employee updated successfully");
     } catch (error) {
       handleError(error);
@@ -111,10 +125,12 @@ export const useEmployees = () => {
     setIsLoading(true);
     try {
       const res = await deleteEmployee(id);
+      await fetchEmployees();
       setEmployees((prev) => ({
         ...prev,
         data: prev.data.filter((emp) => emp.id !== res.data.payload.id),
       }));
+      toast.success("Employee deleted successfully");
     } catch (error) {
       handleError(error);
     } finally {

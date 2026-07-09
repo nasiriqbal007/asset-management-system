@@ -11,7 +11,7 @@ export const getAllEmployeeList = (params: EmpQueryParams) =>
   });
 export const createEmployee = (data: EmployeeCreateInput) =>
   api.post("employees", data);
-export const updateEmployee = (data: EmployeeUpdateInput) =>
-  api.patch(`employees/${data.id}`, data);
+export const updateEmployee = (id: number, data: EmployeeUpdateInput) =>
+  api.patch(`employees/${id}`, data);
 export const deleteEmployee = (id: number) => api.delete(`employees/${id}`);
 export const getExportEmpCSV = () => api.get("employees/export");

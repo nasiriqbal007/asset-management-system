@@ -96,35 +96,41 @@ export const Assets = () => {
       {isLoading && <LoadingSpinner />}
 
       <div className="flex-1 overflow-y-auto min-h-0 pr-1 pb-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {assets.data
-            .filter((asset) => asset && asset.id)
-            .map((asset) => (
-              <AssetCard
-                key={asset.id}
-                asset={asset}
-                actions={
-                  <div className="flex justify-end mt-4 gap-2">
-                    <button
-                      className="secondary-button"
-                      onClick={() => {
-                        setAssetToEdit(asset);
-                        setOpenModel(true);
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="secondary-button danger-button "
-                      onClick={() => AssetDelete(asset.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                }
-              />
-            ))}
-        </div>
+        {assets.data.filter((asset) => asset && asset.id).length === 0 ? (
+          <div className="flex items-center justify-center h-40 text-(--text-secondary)">
+            No assets found
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {assets.data
+              .filter((asset) => asset && asset.id)
+              .map((asset) => (
+                <AssetCard
+                  key={asset.id}
+                  asset={asset}
+                  actions={
+                    <div className="flex justify-end mt-4 gap-2">
+                      <button
+                        className="secondary-button"
+                        onClick={() => {
+                          setAssetToEdit(asset);
+                          setOpenModel(true);
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="secondary-button danger-button "
+                        onClick={() => AssetDelete(asset.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  }
+                />
+              ))}
+          </div>
+        )}
       </div>
 
       <div className="shrink-0 -mx-2 mt-4">

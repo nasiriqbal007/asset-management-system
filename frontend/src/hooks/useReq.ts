@@ -9,6 +9,7 @@ import type { AssetRequest } from "../types/request";
 import { handleError } from "../utils/handleError";
 import type { PaginatedResponse } from "../types/pagination";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 export const useRequests = () => {
   const [requests, setRequests] = useState<PaginatedResponse<AssetRequest>>({
@@ -35,9 +36,16 @@ export const useRequests = () => {
             })
           : await getAllRequests({ page, limit: requests.pagination.limit });
         setRequests(res.data.payload);
-        
       } catch (error) {
-        handleError(error);
+        if (axios.isAxiosError(error) && error.response?.status === 404) {
+          setRequests((prev) => ({
+            ...prev,
+            data: [],
+            pagination: { ...prev.pagination, total: 0, totalPages: 1 },
+          }));
+        } else {
+          handleError(error);
+        }
       } finally {
         setIsLoading(false);
       }

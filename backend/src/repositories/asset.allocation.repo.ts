@@ -44,7 +44,14 @@ export const assetReturnDate = async (
         "UPDATE asset_allocations SET returned_date = NOW() WHERE id = $1 RETURNING *",
         [id],
       );
-      return update.rows[0] || null;
+      const allocation = update.rows[0] || null;
+      if (allocation) {
+        await client.query(
+          "UPDATE assets SET status = $1 WHERE id = $2",
+          ["available", allocation.asset_id],
+        );
+      }
+      return allocation;
     },
   );
 };

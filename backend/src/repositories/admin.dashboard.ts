@@ -14,7 +14,7 @@ export const totalEmployees = async (): Promise<number> => {
 export const getTotalAssets = async (): Promise<number> => {
   try {
     const totalAsset = await pool.query("SELECT COUNT(*) AS total FROM assets");
-    console.log(totalAsset);
+   
     return Number(totalAsset.rows[0].total);
   } catch (error) {
     throw error;

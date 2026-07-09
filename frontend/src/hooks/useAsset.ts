@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useCallback, useEffect, useState } from "react";
 import type {
   Asset,
   AssetCreateInput,
@@ -16,6 +17,7 @@ import {
 import { handleError } from "../utils/handleError";
 import type { PaginatedResponse } from "../types/pagination";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 export const useAsset = () => {
   const [assets, setAssets] = useState<PaginatedResponse<Asset>>({
@@ -33,6 +35,7 @@ export const useAsset = () => {
   const [categoryId, setCategoryId] = useState<number | "">("");
 
   const [debouncedSearchText, setDebouncedSearchText] = useState(searchText);
+  const limit = 10;
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchText(searchText);
@@ -41,26 +44,34 @@ export const useAsset = () => {
   }, [searchText]);
 
   const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    const fetchAssets = async () => {
-      setIsLoading(true);
-      try {
-        const res = await getAllAssetList({
-          asset_name: debouncedSearchText || undefined,
-          status: status || undefined,
-          category_id: categoryId === "" ? undefined : categoryId,
-          page,
-          limit: assets.pagination.limit,
-        } as AssetQueryParams);
-        setAssets(res.data.payload.assets);
-      } catch (error) {
+  const fetchAssets = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const res = await getAllAssetList({
+        asset_name: debouncedSearchText || undefined,
+        status: status || undefined,
+        category_id: categoryId === "" ? undefined : categoryId,
+        page,
+        limit: limit,
+      } as AssetQueryParams);
+      setAssets(res.data.payload.assets);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        setAssets((prev) => ({
+          ...prev,
+          data: [],
+          pagination: { ...prev.pagination, total: 0, totalPages: 1 },
+        }));
+      } else {
         handleError(error);
-      } finally {
-        setIsLoading(false);
       }
-    };
+    } finally {
+      setIsLoading(false);
+    }
+  }, [categoryId, debouncedSearchText, page, status]);
+  useEffect(() => {
     fetchAssets();
-  }, [debouncedSearchText, status, categoryId, page, assets.pagination.limit]);
+  }, [fetchAssets]);
 
   const createAsset = async (data: AssetCreateInput) => {
     setIsLoading(true);
@@ -84,6 +95,7 @@ export const useAsset = () => {
     try {
       const res = await updateCurrentAsset(id, data);
       const updatedAsset = res.data.payload;
+      await fetchAssets();
       setAssets((prev) => ({
         ...prev,
         data: prev.data.map((a) =>
@@ -103,6 +115,7 @@ export const useAsset = () => {
     setIsLoading(true);
     try {
       const res = await deleteAsset(id);
+      await fetchAssets();
       setAssets((prev) => ({
         ...prev,
         data: prev.data.filter((a) => a.id !== res.data.payload.data),

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useForm } from "react-hook-form";
 import { Input } from "./Input";
 import type {
@@ -14,7 +15,9 @@ type ModalProps = {
   employee?: Employee | null;
   onClose: () => void;
   isLoading?: boolean;
-  onSubmit: (data: EmployeeCreateInput | EmployeeUpdateInput) => void;
+  onSubmit: (
+    data: EmployeeCreateInput | Omit<EmployeeUpdateInput, "id">,
+  ) => void;
 };
 
 export const EmployeeModal = ({
@@ -31,11 +34,26 @@ export const EmployeeModal = ({
     reset,
   } = useForm<EmployeeCreateInput | EmployeeUpdateInput>();
   useEffect(() => {
-    reset({
-      ...employee,
-      department_id: Number(employee?.department_id),
-    });
+    if (employee) {
+      reset({
+        name: employee.name,
+        email: employee.email,
+        department_id: Number(employee.department_id),
+      });
+    }
   }, [departments, employee, reset]);
+  const handleFormSubmit = (
+    data: EmployeeCreateInput | Omit<EmployeeUpdateInput, "id">,
+  ) => {
+    const {
+      id,
+ ...cleanData
+    } = data as EmployeeUpdateInput;
+    if (employee && !cleanData.password) {
+      delete cleanData.password;
+    }
+    onSubmit(cleanData);
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -51,7 +69,10 @@ export const EmployeeModal = ({
             &times;
           </button>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+        <form
+          onSubmit={handleSubmit(handleFormSubmit)}
+          className="flex flex-col gap-3"
+        >
           <Input
             label="Name"
             {...register("name", { required: "Name is required" })}
@@ -81,7 +102,9 @@ export const EmployeeModal = ({
           <Input
             label="Password"
             type="password"
-            {...register("password", { required: "Password is required" })}
+            {...register("password", {
+              required: employee ? false : "Password is required",
+            })}
             error={errors.password?.message}
           />
           <div className="flex gap-2 justify-end">
