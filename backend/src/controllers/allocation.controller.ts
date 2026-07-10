@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { getAllAllocations } from "../repositories/asset.allocation.repo.js";
 import AppResponse from "../Response/app-response.js";
+import AppError from "../Error/app-error.js";
 import {
   returnAssetService,
   getEmployeeAllocationsService,
@@ -15,7 +16,10 @@ export const getAllocationController = async (
   try {
     const page = req.query.page ? Number(req.query.page) : undefined;
     const limit = req.query.limit ? Number(req.query.limit) : undefined;
-    const getAll = await getAllAllocations({ page, limit });
+    const query: { page?: number; limit?: number } = {};
+    if (page !== undefined) query.page = page;
+    if (limit !== undefined) query.limit = limit;
+    const getAll = await getAllAllocations(query);
     AppResponse.GET_ALL_ALLOCATIONS.send(res, getAll);
   } catch (error) {
     next(error);

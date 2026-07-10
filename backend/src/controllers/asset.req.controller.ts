@@ -20,7 +20,10 @@ export const getAllReqController = async (
   try {
     const page = req.query.page ? Number(req.query.page) : undefined;
     const limit = req.query.limit ? Number(req.query.limit) : undefined;
-    const reqs = await getAllAssetReqService({ page, limit });
+    const query: { page?: number; limit?: number } = {};
+    if (page !== undefined) query.page = page;
+    if (limit !== undefined) query.limit = limit;
+    const reqs = await getAllAssetReqService(query);
     AppResponse.GET_ALL_REQ.send(res, reqs);
   } catch (error) {
     next(error);
@@ -41,7 +44,10 @@ export const getReqByStatusController = async (
 
     const page = req.query.page ? Number(req.query.page) : undefined;
     const limit = req.query.limit ? Number(req.query.limit) : undefined;
-    const reqStatus = await getAssetReqByStatusService(status, { page, limit });
+    const query: { page?: number; limit?: number } = {};
+    if (page !== undefined) query.page = page;
+    if (limit !== undefined) query.limit = limit;
+    const reqStatus = await getAssetReqByStatusService(status, query);
 
     AppResponse.GET_ALL_REQ.send(res, reqStatus);
   } catch (error) {
