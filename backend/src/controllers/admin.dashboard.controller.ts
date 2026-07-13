@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import {
+  getAssetStatusSummaryService,
   TotalEmpService,
   totalAssetService,
   totalAllocatedService,
@@ -77,6 +78,21 @@ export const totalPendingReqController = async (
     const total = await totalPendingReqService();
     AppResponse.TOTAL_PENDING.send(res, {
       Pending: total,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const assetStatusSummaryController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const summary = await getAssetStatusSummaryService();
+    AppResponse.DASHBOARD_STATUS_SUMMARY.send(res, {
+      summary,
     });
   } catch (error) {
     next(error);

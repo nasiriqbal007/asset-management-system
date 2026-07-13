@@ -1,28 +1,37 @@
 import { NavLink, Outlet, useNavigate } from "react-router";
 import { useState } from "react";
 import { useProfile } from "../hooks/useAuth";
+import {
+  ClipboardList,
+  FileText,
+  LayoutDashboard,
+  LogOutIcon,
+  Menu,
+  Package,
+  Search,
+  Users,
+  Zap,
+} from "lucide-react";
 
 export const AdminLayout = () => {
   const navigate = useNavigate();
   const { profile } = useProfile();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
     <div className="flex h-screen bg-(--bg-page) text-(--text-primary) flex-col md:flex-row">
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 transform bg-(--primary-light) border-r border-(--border) transition-transform duration-300 ${
+        className={`fixed inset-y-0 left-0 z-40 w-48 transform bg-linear-to-b from-(--sidebar-gradient-top) to-(--sidebar-gradient-bottom) border-r border-(--border) transition-transform duration-300 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } md:relative md:translate-x-0 md:top-0 md:z-auto`}
+        }`}
       >
-        <div className="flex items-center justify-between border-b border-(--border) p-4 md:justify-center">
-          <div className="text-xl font-semibold">Asset Manager</div>
-          <button
-            className="primary-button md:hidden"
-            onClick={() => setSidebarOpen(false)}
-          >
-            Close
-          </button>
+        <div className="flex items-center bg-(--bg-page) justify-between px-4">
+          <div className=" text-(--sidebar-primary) font-semibold h-16">
+            <h1>Asset</h1>
+            <h1>Manager</h1>
+          </div>
         </div>
+
         <nav className="flex flex-col gap-1 p-4">
           <NavLink
             className={({ isActive }) =>
@@ -30,7 +39,9 @@ export const AdminLayout = () => {
             }
             to="/admin/dashboard"
           >
-            Dashboard
+            <div className="flex items-center gap-2">
+              <LayoutDashboard size={24} /> Dashboard
+            </div>
           </NavLink>
           <NavLink
             className={({ isActive }) =>
@@ -38,7 +49,10 @@ export const AdminLayout = () => {
             }
             to="/admin/employees"
           >
-            Employees
+            <div className="flex items-center gap-2">
+              <Users size={24} />
+              Employees
+            </div>
           </NavLink>
           <NavLink
             className={({ isActive }) =>
@@ -46,7 +60,10 @@ export const AdminLayout = () => {
             }
             to="/admin/assets"
           >
-            Assets
+            <div className="flex items-center gap-2">
+              <Package size={24} />
+              Assets
+            </div>
           </NavLink>
           <NavLink
             className={({ isActive }) =>
@@ -54,7 +71,10 @@ export const AdminLayout = () => {
             }
             to="/admin/requests"
           >
-            Requests
+            <div className="flex items-center gap-2">
+              <ClipboardList size={24} />
+              Requests
+            </div>
           </NavLink>
           <NavLink
             className={({ isActive }) =>
@@ -62,7 +82,10 @@ export const AdminLayout = () => {
             }
             to="/admin/allocations"
           >
-            Allocations
+            <div className="flex items-center gap-2">
+              <Zap size={24} />
+              Allocations
+            </div>
           </NavLink>
           <NavLink
             className={({ isActive }) =>
@@ -70,7 +93,10 @@ export const AdminLayout = () => {
             }
             to="/admin/logs"
           >
-            Logs
+            <div className="flex items-center gap-2">
+              <FileText size={24} />
+              Logs
+            </div>
           </NavLink>
         </nav>
       </aside>
@@ -82,20 +108,39 @@ export const AdminLayout = () => {
         />
       )}
 
-      <div className="flex flex-col flex-1 md:pl-0">
+      <div
+        className={`flex flex-col flex-1 transition-all duration-300 ${sidebarOpen ? "md:pl-48" : "md:pl-0"}`}
+      >
         <header className="h-16 border-(--border) border-b flex items-center justify-between gap-4 px-4 md:px-6">
-          <button
-            className="primary-button md:hidden"
-            onClick={() => setSidebarOpen(true)}
-          >
-            Menu
-          </button>
-          <span className="flex-1 text-sm md:text-base">
-            Welcome, {profile?.name ?? "Loading..."}
-          </span>
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <button
+              className="text-(--text-primary) hover:cursor-pointer shrink-0"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              <Menu size={24} />
+            </button>
 
+            <div className="flex flex-col text-left leading-tight truncate">
+              <span className="text-xs text-(--secondary)">Welcome back</span>
+              <span className="text-(--text-primary) font-semibold">
+                {profile?.name ?? "Loading..."}
+              </span>
+            </div>
+          </div>
+          <div className="relative flex items-center max-w-xs">
+            <Search
+              className="absolute left-3 text-gray-400 pointer-events-none"
+              size={18}
+            />
+
+            <input
+              type="text"
+              placeholder="Search anything..."
+              className="w-full bg-(--bg-card) py-2 pl-10 pr-4 rounded-lg border border-(--border) focus:outline-hidden focus:ring-0 placeholder:text-sm text-sm"
+            />
+          </div>
           <button
-            className="primary-button"
+            className="bg-(--bg-card) py-2 px-4 rounded-lg border border-(--border)"
             onClick={() => {
               if (window.confirm("Are you sure you want to logout?")) {
                 localStorage.removeItem("token");
@@ -104,7 +149,10 @@ export const AdminLayout = () => {
               }
             }}
           >
-            Logout
+            <div className="flex gap-2">
+              <LogOutIcon />
+              Logout
+            </div>
           </button>
         </header>
 

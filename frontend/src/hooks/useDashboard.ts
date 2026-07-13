@@ -4,6 +4,7 @@ import {
   getAllEmployees,
   getAllAllocated,
   getAllPending,
+  getAssetStatusSummary,
   getAvailableAssets,
 } from "../services/dashboard.service";
 import type { DashboardStats } from "../types/dashboard";
@@ -15,6 +16,7 @@ const initialStats: DashboardStats = {
   totalAllocated: 0,
   totalPending: 0,
   totalAvailableAssets: 0,
+  statusSummary: [],
 };
 export const useDashboardStats = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -31,25 +33,43 @@ export const useDashboardStats = () => {
           allocatedRes,
           pendingRes,
           availableRes,
+          statusSummaryRes,
         ] = await Promise.all([
           getAllEmployees(),
           getAllAssets(),
           getAllAllocated(),
           getAllPending(),
           getAvailableAssets(),
+          getAssetStatusSummary(),
         ]);
+
+        const summary = statusSummaryRes?.data?.payload?.summary;
+
         setStats({
           totalEmployees: employeesRes.data.payload.Employee,
           totalAssets: assetsRes.data.payload.Assets,
-
           totalAllocated: allocatedRes.data.payload.Allocated,
           totalPending: pendingRes.data.payload.Pending,
           totalAvailableAssets: availableRes.data.payload.Available,
+          statusSummary: [
+            {
+              name: "Available",
+              value: Number(summary?.Available ?? availableRes.data.payload.Available ?? 0),
+            },
+            {
+              name: "Allocated",
+              value: Number(summary?.Allocated ?? allocatedRes.data.payload.Allocated ?? 0),
+            },
+            {
+              name: "Pending",
+              value: Number(summary?.Pending ?? pendingRes.data.payload.Pending ?? 0),
+            },
+            {
+              name: "Maintenance",
+              value: Number(summary?.Maintenance ?? 0),
+            },
+          ],
         });
-        console.log(
-          "Dashboard stats fetched successfully:",
-          availableRes.data.payload.Available,
-        );
       } catch (error) {
           handleError(error);
       } finally {

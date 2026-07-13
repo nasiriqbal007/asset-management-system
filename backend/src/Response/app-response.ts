@@ -39,6 +39,10 @@ class AppResponse {
     200,
   );
   static TOTAL_PENDING = new AppResponse("Total pending requests fetched", 200);
+  static DASHBOARD_STATUS_SUMMARY = new AppResponse(
+    "Dashboard status summary fetched",
+    200,
+  );
   static GET_ALL_Assets = new AppResponse(
     "Retrieved all assets successfully",
     200,

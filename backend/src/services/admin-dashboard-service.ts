@@ -1,5 +1,6 @@
 import AppError from "../Error/app-error.js";
 import {
+  getAssetStatusSummary,
   getTotalAllocations,
   getTotalAssets,
   getTotalAvailableAssets,
@@ -43,4 +44,12 @@ export const totalPendingReqService = async () => {
     throw AppError.NOT_FOUND;
   }
   return total;
+};
+
+export const getAssetStatusSummaryService = async () => {
+  const summary = await getAssetStatusSummary();
+  if (!summary) {
+    throw AppError.NOT_FOUND;
+  }
+  return summary;
 };

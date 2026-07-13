@@ -2,6 +2,7 @@ import { Router } from "express";
 import { authMiddleware, requireRole } from "../middleware/auth-middleware.js";
 
 import {
+  assetStatusSummaryController,
   totalEmpController,
   totalAllocatedController,
   totalAssetController,
@@ -40,4 +41,10 @@ adminDashboard.get(
   authMiddleware,
   requireRole(["admin"]),
   totalPendingReqController,
+);
+adminDashboard.get(
+  "/status-summary",
+  authMiddleware,
+  requireRole(["admin"]),
+  assetStatusSummaryController,
 );
