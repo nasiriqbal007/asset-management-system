@@ -5,5 +5,6 @@ export type LogEntry = {
   action: string;
   entity_type: string;
   entity_id?: number;
+  desc: string;
   created_at?: string;
 };

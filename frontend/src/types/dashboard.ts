@@ -3,6 +3,12 @@ export type DashboardStatusItem = {
   value: number;
 };
 
+export type DashboardCategoryItem = {
+  name: string;
+  count: number;
+  percentage: number;
+};
+
 export type DashboardStats = {
   totalEmployees: number;
   totalAssets: number;
@@ -10,4 +16,5 @@ export type DashboardStats = {
   totalAvailableAssets: number;
   totalPending: number;
   statusSummary: DashboardStatusItem[];
+  topCategories: DashboardCategoryItem[];
 };

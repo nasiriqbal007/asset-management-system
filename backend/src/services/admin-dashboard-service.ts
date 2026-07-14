@@ -6,6 +6,7 @@ import {
   getTotalAvailableAssets,
   getTotalPendingReq,
   totalEmployees,
+  getTopAssetCategories,
 } from "../repositories/admin.dashboard.js";
 
 export const TotalEmpService = async () => {
@@ -52,4 +53,12 @@ export const getAssetStatusSummaryService = async () => {
     throw AppError.NOT_FOUND;
   }
   return summary;
+};
+
+export const getTopAssetCategoriesService = async () => {
+  const categories = await getTopAssetCategories();
+  if (!categories) {
+    throw AppError.NOT_FOUND;
+  }
+  return categories;
 };

@@ -43,6 +43,10 @@ class AppResponse {
     "Dashboard status summary fetched",
     200,
   );
+  static TOP_CATEGORIES = new AppResponse(
+    "Top asset categories fetched",
+    200,
+  );
   static GET_ALL_Assets = new AppResponse(
     "Retrieved all assets successfully",
     200,

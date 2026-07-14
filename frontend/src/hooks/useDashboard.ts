@@ -6,6 +6,7 @@ import {
   getAllPending,
   getAssetStatusSummary,
   getAvailableAssets,
+  getTopCategories,
 } from "../services/dashboard.service";
 import type { DashboardStats } from "../types/dashboard";
 import { handleError } from "../utils/handleError";
@@ -17,6 +18,7 @@ const initialStats: DashboardStats = {
   totalPending: 0,
   totalAvailableAssets: 0,
   statusSummary: [],
+  topCategories: [],
 };
 export const useDashboardStats = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -34,6 +36,7 @@ export const useDashboardStats = () => {
           pendingRes,
           availableRes,
           statusSummaryRes,
+          categoryTopRes,
         ] = await Promise.all([
           getAllEmployees(),
           getAllAssets(),
@@ -41,6 +44,7 @@ export const useDashboardStats = () => {
           getAllPending(),
           getAvailableAssets(),
           getAssetStatusSummary(),
+          getTopCategories(),
         ]);
 
         const summary = statusSummaryRes?.data?.payload?.summary;
@@ -54,24 +58,31 @@ export const useDashboardStats = () => {
           statusSummary: [
             {
               name: "Available",
-              value: Number(summary?.Available ?? availableRes.data.payload.Available ?? 0),
+              value: Number(
+                summary?.Available ?? availableRes.data.payload.Available ?? 0,
+              ),
             },
             {
               name: "Allocated",
-              value: Number(summary?.Allocated ?? allocatedRes.data.payload.Allocated ?? 0),
+              value: Number(
+                summary?.Allocated ?? allocatedRes.data.payload.Allocated ?? 0,
+              ),
             },
             {
               name: "Pending",
-              value: Number(summary?.Pending ?? pendingRes.data.payload.Pending ?? 0),
+              value: Number(
+                summary?.Pending ?? pendingRes.data.payload.Pending ?? 0,
+              ),
             },
             {
               name: "Maintenance",
               value: Number(summary?.Maintenance ?? 0),
             },
           ],
+          topCategories: categoryTopRes?.data?.payload?.categories ?? [],
         });
       } catch (error) {
-          handleError(error);
+        handleError(error);
       } finally {
         setIsLoading(false);
       }

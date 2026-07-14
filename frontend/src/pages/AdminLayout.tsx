@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate } from "react-router";
 import { useState } from "react";
 import { useProfile } from "../hooks/useAuth";
+import logo from "../assets/logo_ast.png";
 import {
   ClipboardList,
   FileText,
@@ -25,11 +26,8 @@ export const AdminLayout = () => {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex items-center bg-(--bg-page) justify-between px-4">
-          <div className=" text-(--sidebar-primary) font-semibold h-16">
-            <h1>Asset</h1>
-            <h1>Manager</h1>
-          </div>
+        <div>
+          <img src={logo}></img>
         </div>
 
         <nav className="flex flex-col gap-1 p-4">
@@ -127,7 +125,7 @@ export const AdminLayout = () => {
               </span>
             </div>
           </div>
-          <div className="relative flex items-center max-w-xs">
+          <div className="relative flex  items-center max-w-xs">
             <Search
               className="absolute left-3 text-gray-400 pointer-events-none"
               size={18}
@@ -140,7 +138,7 @@ export const AdminLayout = () => {
             />
           </div>
           <button
-            className="bg-(--bg-card) py-2 px-4 rounded-lg border border-(--border)"
+            className="bg-(--bg-card) py-2 px-4 rounded-lg border border-(--border) hover:bg-(--bg-card-hover) hover:cursor-pointer transition-colors duration-200 ease-in-out"
             onClick={() => {
               if (window.confirm("Are you sure you want to logout?")) {
                 localStorage.removeItem("token");

@@ -4,6 +4,7 @@ export type AuditLog = {
   action: string;
   entity_type: string;
   entity_id: number | null;
+  description?: string;
 };
 
 export type CreateAuditLogInput = {
@@ -11,4 +12,5 @@ export type CreateAuditLogInput = {
   action: string;
   entity_type: string;
   entity_id: number | null;
+  description?: string;
 };

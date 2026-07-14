@@ -130,12 +130,17 @@ export const updateAsset = async (
   userId: number,
   data: UpdateAsset,
 ) => {
+  const assetRes = await pool.query("SELECT asset_name FROM assets WHERE id = $1", [assetId]);
+  const originalName = assetRes.rows[0]?.asset_name || "Asset";
+  const finalName = data.asset_name || originalName;
+
   return await runTransactionWithLog(
     {
       user_id: userId,
       action: "update",
       entity_type: "Asset",
       entity_id: assetId,
+      description: `Asset updated: ${finalName}`,
     },
     async (client) => {
       const updatedAsset = await client.query(
@@ -166,12 +171,16 @@ export const updateAsset = async (
 };
 
 export const deleteAsset = async (assetId: number, userId: number) => {
+  const assetRes = await pool.query("SELECT asset_name FROM assets WHERE id = $1", [assetId]);
+  const assetName = assetRes.rows[0]?.asset_name || "Asset";
+
   return await runTransactionWithLog(
     {
       user_id: userId,
       action: "update",
       entity_type: "Asset",
       entity_id: assetId,
+      description: `Asset deleted: ${assetName}`,
     },
     async (client) => {
       const deletedAsset = await client.query(

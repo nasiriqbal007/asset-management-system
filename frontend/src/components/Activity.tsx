@@ -28,18 +28,24 @@ export const ActivityCard = ({ activities }: ActivityCardProps) => {
         {activities.map((activity, index) => (
           <div
             key={index}
-            className="flex items-start gap-3 pb-4 border-b border-(--border) last:border-b-0"
+            className="flex items-center gap-3 py-3 border-b border-(--border) last:border-b-0"
           >
-            <div className={`${activity.bgColor} p-2 rounded-lg shrink-0`}>
-              <activity.icon className={activity.iconColor} size={20} />
+            <div
+              className={`${activity.bgColor} w-10 h-10 flex items-center justify-center rounded-full shrink-0`}
+            >
+              <activity.icon className={`${activity.iconColor}`} size={18} />
             </div>
+
             <div className="flex-1 min-w-0">
-              <p className="font-semibold text-(--text-primary) text-sm">
+              <p className="font-semibold text-(--text-primary) text-sm truncate">
                 {activity.title}
               </p>
-              <p className="text-xs text-(--text-secondary)">{activity.desc}</p>
+              <p className="text-xs text-(--text-secondary) mt-1 truncate">
+                {activity.desc}
+              </p>
             </div>
-            <span className="text-xs text-(--text-secondary) shrink-0">
+
+            <span className="text-xs text-(--text-secondary) shrink-0 ml-4">
               {activity.time}
             </span>
           </div>

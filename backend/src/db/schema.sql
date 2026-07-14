@@ -107,6 +107,7 @@ CREATE TABLE activity_logs(
   action TEXT NOT NULL,
   entity_type TEXT NOT NULL,
   entity_id INT NOT NULL,
+  description TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_user
         FOREIGN KEY (user_id)

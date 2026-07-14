@@ -12,8 +12,8 @@ export const runTransactionWithLog = async <T>(
     await client.query("BEGIN");
     const result = await operation(client);
     await client.query(
-      `INSERT INTO activity_logs(user_id, action,entity_type, entity_id) VALUES($1,$2,$3,$4) RETURNING *`,
-      [audit.user_id, audit.action, audit.entity_type, audit.entity_id],
+      `INSERT INTO activity_logs(user_id, action,entity_type, entity_id, description) VALUES($1,$2,$3,$4,$5) RETURNING *`,
+      [audit.user_id, audit.action, audit.entity_type, audit.entity_id, audit.description],
     );
     await client.query("COMMIT");
     return result;

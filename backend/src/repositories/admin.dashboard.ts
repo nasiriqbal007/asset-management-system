@@ -87,3 +87,28 @@ export const getAssetStatusSummary = async (): Promise<DashboardStatusSummary> =
     throw error;
   }
 };
+
+export interface TopAssetCategory {
+  name: string;
+  count: number;
+  percentage: number;
+}
+
+export const getTopAssetCategories = async (): Promise<TopAssetCategory[]> => {
+  try {
+    const result = await pool.query(
+      `SELECT 
+         c.category_name AS name,
+         COUNT(a.id)::int AS count,
+         ROUND((COUNT(a.id)::decimal / NULLIF((SELECT COUNT(*) FROM assets WHERE deleted_at IS NULL), 0)) * 100, 1)::float AS percentage
+       FROM assets a
+       JOIN categories c ON a.category_id = c.id
+       WHERE a.deleted_at IS NULL
+       GROUP BY c.category_name, c.id
+       ORDER BY count DESC`
+    );
+    return result.rows;
+  } catch (error) {
+    throw error;
+  }
+};

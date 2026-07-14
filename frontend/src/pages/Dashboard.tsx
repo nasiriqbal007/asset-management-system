@@ -4,9 +4,15 @@ import {
   Users,
   CheckCircle,
   ClipboardList,
-  User,
   Laptop,
   UserPlus,
+  Smartphone,
+  Headphones,
+  Keyboard,
+  Monitor,
+  MousePointer,
+  BookOpen,
+  MoreHorizontal,
 } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { StatCard } from "../components/StatCard";
@@ -15,10 +21,15 @@ import { LoadingSpinner } from "../components/LoadingSpinner";
 import { DropDown } from "../components/DropDown";
 import { ActivityCard } from "../components/Activity";
 import { CategoryCard } from "../components/CategoryCard";
-
+import { QuickActionCard } from "../components/QuickCard";
+import { useNavigate } from "react-router";
+import { useActivity } from "../hooks/useActivity";
 export const Dashboard = () => {
   const { isLoading, stats } = useDashboardStats();
-
+  const { activityLogs } = useActivity();
+  const navigate = useNavigate();
+  const topCategories =
+    stats.topCategories.length > 0 ? stats.topCategories : [];
   const data =
     stats.statusSummary.length > 0
       ? stats.statusSummary
@@ -30,7 +41,6 @@ export const Dashboard = () => {
         ];
 
   const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#a855f7"];
-  //for dropdonw months
   const options = [
     {
       label: "this month",
@@ -45,6 +55,106 @@ export const Dashboard = () => {
       value: "last 3 months",
     },
   ];
+
+  const iconMap = {
+    Laptops: {
+      icon: Laptop,
+      iconColor: "text-blue-500",
+      bgColor: "bg-blue-100",
+      barColor: "bg-blue-600",
+    },
+    Mobiles: {
+      icon: Smartphone,
+      iconColor: "text-sky-500",
+      bgColor: "bg-sky-100",
+      barColor: "bg-sky-600",
+    },
+    Accessories: {
+      icon: Headphones,
+      iconColor: "text-emerald-500",
+      bgColor: "bg-emerald-100",
+      barColor: "bg-emerald-600",
+    },
+    Peripherals: {
+      icon: Keyboard,
+      iconColor: "text-amber-500",
+      bgColor: "bg-amber-100",
+      barColor: "bg-amber-600",
+    },
+    Keyboard: {
+      icon: Keyboard,
+      iconColor: "text-amber-500",
+      bgColor: "bg-amber-100",
+      barColor: "bg-amber-600",
+    },
+    Laptop: {
+      icon: Laptop,
+      iconColor: "text-blue-500",
+      bgColor: "bg-blue-100",
+      barColor: "bg-blue-600",
+    },
+    Headphones: {
+      icon: Headphones,
+      iconColor: "text-emerald-500",
+      bgColor: "bg-emerald-100",
+      barColor: "bg-emerald-600",
+    },
+    Monitor: {
+      icon: Monitor,
+      iconColor: "text-violet-500",
+      bgColor: "bg-violet-100",
+      barColor: "bg-violet-600",
+    },
+    Mouse: {
+      icon: MousePointer,
+      iconColor: "text-slate-500",
+      bgColor: "bg-slate-100",
+      barColor: "bg-slate-600",
+    },
+    Notebook: {
+      icon: BookOpen,
+      iconColor: "text-fuchsia-500",
+      bgColor: "bg-fuchsia-100",
+      barColor: "bg-fuchsia-600",
+    },
+    Others: {
+      icon: MoreHorizontal,
+      iconColor: "text-gray-500",
+      bgColor: "bg-gray-100",
+      barColor: "bg-gray-400",
+    },
+  } as const;
+
+  const categoryItems = topCategories.map((category) => {
+    const categoryKey = category.name as keyof typeof iconMap;
+    const style = iconMap[categoryKey] ?? iconMap.Others;
+
+    return {
+      title: category.name,
+      percentage: category.percentage,
+      count: category.count,
+      icon: style.icon,
+      iconColor: style.iconColor,
+      bgColor: style.bgColor,
+      barColor: style.barColor,
+    };
+  });
+
+  const activityItems = (activityLogs?.data ?? []).slice(0, 5).map((a) => {
+    return {
+      icon: Package,
+      title: a.action,
+      desc: a.desc,
+      time:
+        new Date(a.created_at || "").toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        }) || "",
+      bgColor: "bg-blue-100",
+      iconColor: "text-blue-500",
+      iconBgColor: "bg-blue-100",
+    };
+  });
 
   return (
     <div className="px-2 pt-6 pb-2 bg-(--bg-page)">
@@ -130,7 +240,7 @@ export const Dashboard = () => {
                     className="text-2xl font-bold"
                     fill="black"
                   >
-                    <tspan x="50%">31</tspan>
+                    <tspan x="50%">{stats.totalAssets}</tspan>
                     <tspan x="50%" dy="1.2em" fontSize="12" fill="gray">
                       Total Assets
                     </tspan>
@@ -165,67 +275,48 @@ export const Dashboard = () => {
           </div>
         </div>
 
-        <ActivityCard
-          activities={[
-            {
-              icon: User,
-              title: "New user registered",
-              desc: "A new user has registered on the platform.",
-              time: "2 hours ago",
-              bgColor: "bg-blue-100",
-              iconColor: "text-blue-500",
-            },
-          ]}
-        />
+        <ActivityCard activities={activityItems} />
         <CategoryCard
-          title={"Laptops"}
-          value={45}
-          icon={Laptop}
-          bgColor="bg-blue-100"
-          iconColor="text-blue-500"
-          barColor={"bg-blue-600"}
+          title="Top Asset Categories"
+          items={categoryItems}
+          options={options}
         />
       </div>
-      <div className="p-6 mt-6 bg-(--bg-card) rounded-2xl border border-(--border) shadow-xs flex flex-row gap-6">
-        <div>
-          <h2 className="text-lg font-semibold text-(--text-primary) mb-4">
-            Quick Actions
-          </h2>
-          <div>
-            <div className=" flex gap-4 item-center p-4 bg-purple-200 rounded-2xl ">
-              <div className="p-6 bg-purple-600 rounded-xl  items-center justify-center">
-                <UserPlus className="text-white" size={24} />
-              </div>
-              <div className="flex flex-col">
-                <h4 className="text-lg font-semibold text-(--text-primary) mt-4">
-                  Add Employee
-                </h4>
-                <p className="text-sm text-(--text-secondary) mt-2">
-                  add new employee
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold text-(--text-primary) mb-4">
-            Quick Actions
-          </h2>
-          <div>
-            <div className=" flex gap-4 item-center p-4 bg-purple-200 rounded-2xl ">
-              <div className="p-6 bg-purple-600 rounded-xl  items-center justify-center">
-                <UserPlus className="text-white" size={24} />
-              </div>
-              <div className="flex flex-col">
-                <h4 className="text-lg font-semibold text-(--text-primary) mt-4">
-                  Add Employee
-                </h4>
-                <p className="text-sm text-(--text-secondary) mt-2">
-                  add new employee
-                </p>
-              </div>
-            </div>
-          </div>
+      <div className="p-6 mt-6 bg-(--bg-card) rounded-2xl border border-(--border) shadow-xs">
+        <h2 className="text-lg font-semibold text-(--text-primary) mb-4">
+          Quick Actions
+        </h2>
+
+        <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+          <QuickActionCard
+            title="Add Employee"
+            titleColor="text-(--text-primary)"
+            desc="Add a new employee"
+            icon={UserPlus}
+            iconBgColor="bg-purple-600"
+            bgColor="bg-purple-50"
+            onClick={() => navigate("/admin/employees")}
+          />
+
+          <QuickActionCard
+            title="Add Asset"
+            titleColor="text-(--text-primary)"
+            desc="Register new asset"
+            icon={Package}
+            iconBgColor="bg-blue-600"
+            bgColor="bg-blue-50"
+            onClick={() => navigate("/admin/assets")}
+          />
+
+          <QuickActionCard
+            title="Quick Allocation"
+            titleColor="text-(--text-primary)"
+            desc="Allocate asset quickly"
+            icon={Layers}
+            iconBgColor="bg-amber-500"
+            bgColor="bg-amber-50"
+            onClick={() => navigate("/admin/allocations")}
+          />
         </div>
       </div>
     </div>

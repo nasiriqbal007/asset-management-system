@@ -8,6 +8,7 @@ import {
   totalAssetController,
   totalAvailableAssetController,
   totalPendingReqController,
+  topAssetCategoriesController,
 } from "../controllers/admin.dashboard.controller.js";
 
 export const adminDashboard = Router();
@@ -47,4 +48,10 @@ adminDashboard.get(
   authMiddleware,
   requireRole(["admin"]),
   assetStatusSummaryController,
+);
+adminDashboard.get(
+  "/top-categories",
+  authMiddleware,
+  requireRole(["admin"]),
+  topAssetCategoriesController,
 );

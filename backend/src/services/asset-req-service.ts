@@ -99,9 +99,12 @@ export const rejectRequestService = async (reqId: number, userId: number) => {
     if (!updateReq) {
       throw AppError.VALIDATION_ERROR;
     }
+    const assetRes = await client.query("SELECT asset_name FROM assets WHERE id = $1", [req.asset_id]);
+    const assetName = assetRes.rows[0]?.asset_name || "Asset";
+
     await client.query(
-      "INSERT INTO activity_logs (user_id, action, entity_type,entity_id) VALUES ($1,$2,$3,$4)",
-      [userId, "rejected", "Asset Request", reqId],
+      "INSERT INTO activity_logs (user_id, action, entity_type, entity_id, description) VALUES ($1,$2,$3,$4,$5)",
+      [userId, "rejected", "Asset Request", reqId, `Request for ${assetName} rejected`],
     );
     await client.query("COMMIT");
   } catch (error) {
@@ -150,9 +153,12 @@ export const approveRequestService = async (
       ["allocated", allocatedAssetId],
     );
 
+    const assetRes = await client.query("SELECT asset_name FROM assets WHERE id = $1", [allocatedAssetId]);
+    const assetName = assetRes.rows[0]?.asset_name || "Asset";
+
     await client.query(
-      "INSERT INTO activity_logs (user_id,action,entity_type, entity_id) VALUES($1,$2,$3,$4)",
-      [userId, "Approved", "Asset Request", reqId],
+      "INSERT INTO activity_logs (user_id, action, entity_type, entity_id, description) VALUES($1,$2,$3,$4,$5)",
+      [userId, "Approved", "Asset Request", reqId, `Request for ${assetName} approved`],
     );
     await client.query("COMMIT");
     return allocation;

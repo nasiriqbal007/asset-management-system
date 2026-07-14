@@ -9,12 +9,18 @@ export const createAllocation = async (
   userId: number,
   data: createAllocationInput,
 ): Promise<AssetAllocation | null> => {
+  const assetRes = await pool.query("SELECT asset_name FROM assets WHERE id = $1", [data.asset_id]);
+  const empRes = await pool.query("SELECT name FROM employees WHERE id = $1", [data.employee_id]);
+  const assetName = assetRes.rows[0]?.asset_name || "Unknown Asset";
+  const empName = empRes.rows[0]?.name || "Unknown Employee";
+
   return await runTransactionWithLog(
     {
       user_id: userId,
       action: "Create",
       entity_type: "Asset Allocation",
       entity_id: userId,
+      description: `${assetName} allocated to ${empName}`,
     },
     async (client) => {
       const newAllocation = await client.query(
@@ -32,12 +38,26 @@ export const assetReturnDate = async (
   id: number,
   userId: number,
 ): Promise<AssetAllocation | null> => {
+  const allocRes = await pool.query(
+    `SELECT e.name AS emp_name, ast.asset_name 
+     FROM asset_allocations a
+     JOIN employees e ON a.employee_id = e.id
+     JOIN assets ast ON a.asset_id = ast.id
+     WHERE a.id = $1`, 
+    [id]
+  );
+  const details = allocRes.rows[0];
+  const description = details 
+    ? `${details.asset_name} returned by ${details.emp_name}` 
+    : "Asset returned";
+
   return await runTransactionWithLog(
     {
       user_id: userId,
       action: "Create",
       entity_type: "Asset Allocation",
       entity_id: id,
+      description: description,
     },
     async (client) => {
       const update = await client.query(

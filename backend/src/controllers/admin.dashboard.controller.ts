@@ -6,6 +6,7 @@ import {
   totalAllocatedService,
   totalAvailableAssetsService,
   totalPendingReqService,
+  getTopAssetCategoriesService,
 } from "../services/admin-dashboard-service.js";
 import AppResponse from "../Response/app-response.js";
 
@@ -93,6 +94,21 @@ export const assetStatusSummaryController = async (
     const summary = await getAssetStatusSummaryService();
     AppResponse.DASHBOARD_STATUS_SUMMARY.send(res, {
       summary,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const topAssetCategoriesController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const categories = await getTopAssetCategoriesService();
+    AppResponse.TOP_CATEGORIES.send(res, {
+      categories,
     });
   } catch (error) {
     next(error);
