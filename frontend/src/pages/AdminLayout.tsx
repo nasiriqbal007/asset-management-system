@@ -27,7 +27,7 @@ export const AdminLayout = () => {
         }`}
       >
         <div>
-          <img src={logo}></img>
+          <img src={logo} alt="Asset Management Logo" className="h-12 w-auto" />
         </div>
 
         <nav className="flex flex-col gap-1 p-4">
