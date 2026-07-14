@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useNavigate } from "react-router";
 import { useState } from "react";
 import { useProfile } from "../hooks/useAuth";
-import logo from "../assets/logo_ast.png";
+import logo from "../assets/Logo_ast.png";
 import {
   ClipboardList,
   FileText,
