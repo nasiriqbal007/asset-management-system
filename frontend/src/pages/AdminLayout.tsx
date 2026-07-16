@@ -26,8 +26,8 @@ export const AdminLayout = () => {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div>
-          <img src={logo} alt="Asset Management Logo" className="h-12 w-auto" />
+        <div className="flex items-center justify-center w-full h-18 border-b border-(--border)">
+          <img src={logo} alt="AST" className="h-18 w-full" />
         </div>
 
         <nav className="flex flex-col gap-1 p-4">
@@ -109,7 +109,7 @@ export const AdminLayout = () => {
       <div
         className={`flex flex-col flex-1 transition-all duration-300 ${sidebarOpen ? "md:pl-48" : "md:pl-0"}`}
       >
-        <header className="h-16 border-(--border) border-b flex items-center justify-between gap-4 px-4 md:px-6">
+        <header className="h-auto md:h-16 border-(--border) border-b flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4 px-4 md:px-6 py-2">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <button
               className="text-(--text-primary) hover:cursor-pointer shrink-0"
@@ -125,7 +125,7 @@ export const AdminLayout = () => {
               </span>
             </div>
           </div>
-          <div className="relative flex  items-center max-w-xs">
+          <div className="relative flex items-center w-full md:max-w-xs">
             <Search
               className="absolute left-3 text-gray-400 pointer-events-none"
               size={18}
@@ -154,7 +154,7 @@ export const AdminLayout = () => {
           </button>
         </header>
 
-        <main className="px-4 pb-4 pt-4 overflow-auto flex flex-col flex-1 md:px-6">
+        <main className=" pb-4 pt-4 overflow-auto flex flex-col flex-1 md:px-6">
           <Outlet />
         </main>
       </div>

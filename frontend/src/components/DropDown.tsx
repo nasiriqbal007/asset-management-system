@@ -18,14 +18,18 @@ export const DropDown = forwardRef<HTMLSelectElement, SelectProps>(
     const isHorizontal = layout === "horizontal";
 
     return (
-      <div className={isHorizontal ? "flex items-center gap-2" : "flex flex-col gap-1"}>
+      <div
+        className={
+          isHorizontal ? "flex items-center gap-2" : "flex flex-col gap-1"
+        }
+      >
         <label className="text-sm font-medium text-(--text-primary) whitespace-nowrap">
           {label}
         </label>
         <div className="flex flex-col w-full">
           <select
             ref={ref}
-            className="rounded-sm border border-(--border) bg-(--primary-light) text-sm focus:outline-0 py-2 pr-8 pl-3 w-full focus:ring-2 focus:ring-(--primary) focus:ring-offset-1 cursor-pointer"
+            className="   bg-(--bg-card) border border-(--border) rounded-lg text-sm focus:outline-0 py-2 pr-8 pl-3 w-full focus:ring-1 focus:ring-(--primary) cursor-pointer"
             {...props}
           >
             <option value="">Select...</option>
@@ -40,7 +44,9 @@ export const DropDown = forwardRef<HTMLSelectElement, SelectProps>(
             ))}
           </select>
           {error && (
-            <span className="text-xs text-(--status-danger-text) mt-1">{error}</span>
+            <span className="text-xs text-(--status-danger-text) mt-1">
+              {error}
+            </span>
           )}
         </div>
       </div>

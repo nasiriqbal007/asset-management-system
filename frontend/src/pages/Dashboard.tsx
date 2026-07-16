@@ -203,7 +203,7 @@ export const Dashboard = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:3 gap-4 mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:3 gap-4 mt-6 bg-(--bg-page)">
         <div className="bg-(--bg-card) p-4 rounded-2xl border border-(--border) shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-(--text-primary)">
@@ -212,7 +212,7 @@ export const Dashboard = () => {
             <DropDown label={""} options={options} />
           </div>
 
-          <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex flex-col md:flex-row gap-6 ">
             <div className="w-full md:w-1/2 h-48">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
