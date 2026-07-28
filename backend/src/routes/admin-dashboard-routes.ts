@@ -16,42 +16,42 @@ export const adminDashboard = Router();
 adminDashboard.get(
   "/total-employees",
   authMiddleware,
-  requireRole(["admin"]),
+  requireRole(["admin", "manager"]),
   totalEmpController,
 );
 adminDashboard.get(
   "/total-assets",
   authMiddleware,
-  requireRole(["admin"]),
+  requireRole(["admin", "manager"]),
   totalAssetController,
 );
 adminDashboard.get(
   "/total-allocated",
   authMiddleware,
-  requireRole(["admin"]),
+  requireRole(["admin", "manager"]),
   totalAllocatedController,
 );
 adminDashboard.get(
   "/total-available",
   authMiddleware,
-  requireRole(["admin"]),
+  requireRole(["admin", "manager"]),
   totalAvailableAssetController,
 );
 adminDashboard.get(
   "/total-pending",
   authMiddleware,
-  requireRole(["admin"]),
+  requireRole(["admin", "manager"]),
   totalPendingReqController,
 );
 adminDashboard.get(
   "/status-summary",
   authMiddleware,
-  requireRole(["admin"]),
+  requireRole(["admin", "manager"]),
   assetStatusSummaryController,
 );
 adminDashboard.get(
   "/top-categories",
   authMiddleware,
-  requireRole(["admin"]),
+  requireRole(["admin", "manager"]),
   topAssetCategoriesController,
 );

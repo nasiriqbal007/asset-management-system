@@ -7,6 +7,6 @@ export const logRouter = Router();
 logRouter.get(
   "/",
   authMiddleware,
-  requireRole(["admin"]),
+  requireRole(["admin", "manager"]),
   getActivityController,
 );

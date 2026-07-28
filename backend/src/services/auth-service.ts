@@ -45,8 +45,8 @@ export const authenticate = async (data: LoginInput) => {
     config.jwtSecret,
     { expiresIn: "1d" },
   );
-
-  return { user, token };
+  
+return { user, token };
 };
 export const getUserProfile = async (id: number) => {
   const user = await getEmployeeById(id);

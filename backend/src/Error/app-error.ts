@@ -16,6 +16,10 @@ class AppError extends Error {
   static UNAUTHORIZED = new AppError("Unauthorized access", 401);
   static ADMIN_ONLY = new AppError("Admin access required", 403);
   static FORBIDDEN = new AppError("Forbidden", 403);
+  static MANAGER_CANNOT_DELETE = new AppError(
+    "Managers cannot delete assets",
+    403,
+  );
   static ASSET_NOT_FOUND = new AppError("Asset not found", 404);
   static ASSET_ALREADY_EXISTS = new AppError("Asset already exists", 400);
 

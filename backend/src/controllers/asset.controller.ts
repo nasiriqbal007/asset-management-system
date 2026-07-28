@@ -119,11 +119,12 @@ export const deleteAssetController = async (
   try {
     const assetId = Number(req.params.id);
     const userId = Number(req.user?.userId);
+    const userRole = req.user?.role;
     if (!assetId || Number.isNaN(assetId)) {
       throw AppError.INVALID_ID;
     }
 
-    const deleteAsset = await deleteAssetId(assetId, userId);
+    const deleteAsset = await deleteAssetId(assetId, userId, userRole);
     AppResponse.DELETED_ITEM.send(res, deleteAsset);
   } catch (error) {
     next(error);

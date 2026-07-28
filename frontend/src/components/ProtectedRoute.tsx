@@ -1,16 +1,21 @@
 import { Navigate } from "react-router";
+import { useProfile } from "../hooks/useAuth";
 
 type RouteProps = {
   children: React.ReactNode;
-  role: string;
+  role: string | string[];
 };
 export const ProtectedRoute = ({ children, role }: RouteProps) => {
-  const userRole = localStorage.getItem("role");
-  const token = localStorage.getItem("token");
-  if (!token) {
+  const { profile, isLoading } = useProfile();
+  if (isLoading) {
+    return <></>;
+  }
+
+  if (!profile) {
     return <Navigate to="/login" replace />;
   }
-  if (userRole !== role) {
+  const roles = Array.isArray(role) ? role : [role];
+  if (!roles.includes(profile.role || "")) {
     return <Navigate to="/unauthorized" replace />;
   }
   return <>{children}</>;

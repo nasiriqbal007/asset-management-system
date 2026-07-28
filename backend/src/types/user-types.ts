@@ -4,7 +4,7 @@ export type User = {
   email: string;
   department: string;
   department_id: number;
-  role: "employee" | "admin";
+  role: "employee" | "admin" | "manager";
 };
 
 export type CreateUserInput = {
@@ -12,7 +12,7 @@ export type CreateUserInput = {
   email: string;
   department_id: number;
   password: string;
-  role?: "employee" | "admin";
+  role?: "employee" | "admin" | "manager";
 };
 
 export type LoginInput = {
@@ -22,7 +22,7 @@ export type LoginInput = {
 
 export type jwtPayload = {
   userId: number;
-  role: "employee" | "admin";
+  role: "employee" | "admin" | "manager";
   email: string;
 };
 export type UpdateEmpType = {

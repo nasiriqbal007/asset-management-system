@@ -51,7 +51,15 @@ export const getAssetById = async (assetId: number) => {
   }
   return asset;
 };
-export const deleteAssetId = async (assetId: number, userId: number) => {
+export const deleteAssetId = async (
+  assetId: number,
+  userId: number,
+  role?: string,
+) => {
+  if (role === "manager") {
+    throw AppError.MANAGER_CANNOT_DELETE;
+  }
+
   const asset = await deleteAsset(assetId, userId);
   if (!asset) {
     throw AppError.ASSET_NOT_FOUND;

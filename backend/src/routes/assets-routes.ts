@@ -19,25 +19,25 @@ export const assetRoute = Router();
 assetRoute.get(
   "/",
   authMiddleware,
-  requireRole(["admin", "employee"]),
+  requireRole(["admin", "manager", "employee"]),
   getAllAssetsController,
 );
 assetRoute.get(
   "/export",
   authMiddleware,
-  requireRole(["admin"]),
+  requireRole(["admin", "manager"]),
   exportAssetCSVController,
 );
 assetRoute.get(
   "/:id",
   authMiddleware,
-  requireRole(["admin"]),
+  requireRole(["admin", "manager"]),
   getAssetByIdController,
 );
 assetRoute.post(
   "/",
   authMiddleware,
-  requireRole(["admin"]),
+  requireRole(["admin", "manager"]),
   upload.single("image_url"),
   validateBody(CreateAssetSchema),
   createAssetController,
@@ -46,7 +46,7 @@ assetRoute.post(
 assetRoute.patch(
   "/:id",
   authMiddleware,
-  requireRole(["admin"]),
+  requireRole(["admin", "manager"]),
   upload.single("image_url"),
   validateBody(UpdateAssetSchema),
   updateAssetController,

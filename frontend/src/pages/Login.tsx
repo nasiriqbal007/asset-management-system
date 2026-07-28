@@ -16,10 +16,7 @@ export const Login = () => {
       const res = await onLogin(data);
       console.log("Login response:", res);
       if (res) {
-        localStorage.setItem("token", res.token);
-        localStorage.setItem("role", res.user.role);
-        console.log("Login successful:", res.user.role);
-        if (res.user.role === "admin") {
+        if (res.user.role === "admin" || res.user.role === "manager") {
           navigate("/admin/dashboard");
         } else {
           navigate("/employee/available-assets");

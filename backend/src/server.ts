@@ -13,11 +13,17 @@ import { categoriesRoute } from "./routes/categories-routes.js";
 import cors from "cors";
 import { allocationRouter } from "./routes/allocation-route.js";
 import { logRouter } from "./routes/activity.logs-routes.js";
-
+import cookieParser from "cookie-parser";
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
 app.use(limiter);
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/uploads", express.static("uploads"));

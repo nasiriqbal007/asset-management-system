@@ -16,6 +16,7 @@ import { Pagination } from "../components/Pagination";
 export const Assets = () => {
   const [isModelOpen, setOpenModel] = useState(false);
   const [assetToEdit, setAssetToEdit] = useState<Asset | null>(null);
+  const isManager = localStorage.getItem("role") === "manager";
   const {
     assets,
     isLoading,
@@ -119,12 +120,14 @@ export const Assets = () => {
                       >
                         Edit
                       </button>
-                      <button
-                        className="secondary-button danger-button "
-                        onClick={() => AssetDelete(asset.id)}
-                      >
-                        Delete
-                      </button>
+                      {!isManager && (
+                        <button
+                          className="secondary-button danger-button "
+                          onClick={() => AssetDelete(asset.id)}
+                        >
+                          Delete
+                        </button>
+                      )}
                     </div>
                   }
                 />

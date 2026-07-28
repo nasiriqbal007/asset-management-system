@@ -141,8 +141,7 @@ export const AdminLayout = () => {
             className="bg-(--bg-card) py-2 px-4 rounded-lg border border-(--border) hover:bg-(--bg-card-hover) hover:cursor-pointer transition-colors duration-200 ease-in-out"
             onClick={() => {
               if (window.confirm("Are you sure you want to logout?")) {
-                localStorage.removeItem("token");
-                localStorage.removeItem("role");
+              
                 navigate("/login", { replace: true });
               }
             }}

@@ -6,6 +6,7 @@ import {
 } from "../services/auth-service.js";
 
 import AppResponse from "../Response/app-response.js";
+import { config } from "../config/env.js";
 
 export const RegisterController = async (
   req: Request,
@@ -27,7 +28,13 @@ export const LoginController = async (
 ) => {
   try {
     const { user, token } = await authenticate(req.body);
-    AppResponse.LOGIN_SUCCESSFUL.send(res, { user, token });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: config.nodeEnv === "production",
+      sameSite: "strict",
+      maxAge: 5 * 60 * 1000,
+    });
+    AppResponse.LOGIN_SUCCESSFUL.send(res, { user });
   } catch (error) {
     next(error);
   }

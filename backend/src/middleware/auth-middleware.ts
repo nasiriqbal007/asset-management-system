@@ -9,7 +9,7 @@ export const authMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
-  const token = req.headers.authorization?.split(" ")[1];
+  const token = req.cookies.token;
 
   if (!token) {
     throw AppError.UNAUTHORIZED;

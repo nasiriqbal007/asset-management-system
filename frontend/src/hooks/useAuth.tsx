@@ -49,8 +49,8 @@ export const useSignUp = () => {
     setIsLoading(true);
     try {
       const res = await SignUpService(data);
-      return res.data;
       toast.success("Sign up successful");
+      return res.data;
     } catch (error) {
       handleError(error);
     } finally {
@@ -62,19 +62,23 @@ export const useSignUp = () => {
 };
 
 export const useProfile = () => {
-  const [profile, setProfile] = useState<User | null>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [profile, setProfile] = useState<User | null>(null);
   useEffect(() => {
     const fetchProfile = async () => {
       try {
+        setIsLoading(true);
         const res = await Profile();
         return setProfile(res.data.payload);
       } catch (error) {
         handleError(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchProfile();
   }, []);
 
-  return { profile };
+  return { profile, isLoading };
 };
